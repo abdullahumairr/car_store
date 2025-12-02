@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 app.use(authRouter);
 app.use(useRouter);
-app.use(carRouter); 
+app.use(carRouter);
 
 app.use(errorMiddleware);
 
