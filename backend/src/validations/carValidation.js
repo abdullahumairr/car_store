@@ -43,6 +43,9 @@ export const createCarSchema = z.object({
     })
     .nonnegative("harga tidak boleh negatif"),
 
+  address: z.string().min(3),
+  image_url: z.string().nullable(),
+
   status: z.enum(["available", "sold"]).default("available"),
 });
 
@@ -92,6 +95,9 @@ export const updateCarSchema = z.object({
     })
     .nonnegative("harga tidak boleh negatif")
     .optional(),
+
+  address: z.string().min(3).optional(),
+  image_url: z.string().optional(),
 
   status: z.enum(["available", "sold"]).optional(),
 });

@@ -3,7 +3,7 @@ import { ResponseError } from "../errors/responseError.js";
 import {
   createCarSchema,
   updateCarSchema,
-} from "../validations/CarValidation.js";
+} from "../validations/carValidation.js";
 import validate from "../validations/validate.js";
 
 export const getAllCarsHandler = async () => {
@@ -31,13 +31,32 @@ export const getCarByIdHandler = async (id) => {
 
 export const createCarHandler = async (request) => {
   const validated = validate(createCarSchema, request);
-  const { user_id, car_name, brand, year, mileage, description, price } =
-    validated;
+  const {
+    user_id,
+    car_name,
+    brand,
+    year,
+    mileage,
+    description,
+    price,
+    address,
+    image_url,
+  } = validated;
 
   const [result] = await pool.query(
-    `INSERT INTO cars (user_id, car_name, brand, year, mileage, description, price) 
-     VALUES (?,?,?,?,?,?,?)`,
-    [user_id, car_name, brand, year, mileage, description, price]
+    `INSERT INTO cars (user_id, car_name, brand, year, mileage, description, price, address, image_url, status) 
+     VALUES (?,?,?,?,?,?,?,?,?, 'available')`,
+    [
+      user_id,
+      car_name,
+      brand,
+      year,
+      mileage,
+      description,
+      price,
+      address,
+      image_url,
+    ]
   );
 
   return {
@@ -49,6 +68,8 @@ export const createCarHandler = async (request) => {
     mileage,
     description,
     price,
+    address,
+    image_url,
     status: "available",
   };
 };
@@ -63,18 +84,32 @@ export const updateCarHandler = async (id, request) => {
     mileage,
     description,
     price,
+    address,
+    image_url,
     status,
   } = validated;
 
   await pool.query(
     `UPDATE cars 
-     SET user_id=?, car_name=?, brand=?, year=?, mileage=?, description=?, price=?, status=? 
+     SET user_id=?, car_name=?, brand=?, year=?, mileage=?, description=?, price=?, address=?, image_url=?, status=? 
      WHERE id=?`,
-    [user_id, car_name, brand, year, mileage, description, price, status, id]
+    [
+      user_id,
+      car_name,
+      brand,
+      year,
+      mileage,
+      description,
+      price,
+      address,
+      image_url,
+      status,
+      id,
+    ]
   );
 
   const [updatedCar] = await pool.query(
-    `SELECT id, user_id, car_name, brand, year, mileage, description, price, status 
+    `SELECT id, user_id, car_name, brand, year, mileage, description, price, address, image_url, status 
      FROM cars WHERE id=?`,
     [id]
   );

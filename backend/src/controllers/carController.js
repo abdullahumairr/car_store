@@ -33,7 +33,7 @@ export const createCarHandler = async (req, res, next) => {
 
     res.status(201).json({
       status: "success",
-      message: "Cars create successfully",
+      message: "Car create successfully",
       data: response,
     });
   } catch (error) {
@@ -48,7 +48,7 @@ export const updateCarHandler = async (req, res, next) => {
 
     res.status(201).json({
       status: "success",
-      message: "Cars update successfully",
+      message: "Car update successfully",
       data: response,
     });
   } catch (error) {
@@ -63,7 +63,7 @@ export const deleteCarHandler = async (req, res, next) => {
 
     res.status(201).json({
       status: "success",
-      message: "Cars delete successfully",
+      message: "Car delete successfully",
       data: response,
     });
   } catch (error) {
