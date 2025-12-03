@@ -29,24 +29,22 @@ export const getCarByIdHandler = async (id) => {
   return cars[0];
 };
 
-export const createCarHandler = async (request) => {
-  const user_id = request.user.id; 
-
+export const createCarHandler = async (request, files, user) => {
   const validated = validate(createCarSchema, request);
-  const {
-    car_name,
-    brand,
-    year,
-    mileage,
-    description,
-    price,
-    address,
-    image_url,
-  } = validated;
+  const { car_name, brand, year, mileage, description, price, address } =
+    validated;
+
+  const user_id = user.id;
+
+  const imageUrls =
+    files?.map(
+      (file) => `http://localhost:7777/uploads/cars/${file.filename}`
+    ) || [];
 
   const [result] = await pool.query(
-    `INSERT INTO cars (user_id, car_name, brand, year, mileage, description, price, address, image_url, status) 
-     VALUES (?,?,?,?,?,?,?,?,?, 'available')`,
+    `INSERT INTO cars 
+     (user_id, car_name, brand, year, mileage, description, price, address, image_url) 
+     VALUES (?,?,?,?,?,?,?,?,?)`,
     [
       user_id,
       car_name,
@@ -56,7 +54,7 @@ export const createCarHandler = async (request) => {
       description,
       price,
       address,
-      image_url,
+      JSON.stringify(imageUrls),
     ]
   );
 
@@ -70,29 +68,35 @@ export const createCarHandler = async (request) => {
     description,
     price,
     address,
-    image_url,
+    image_url: imageUrls,
     status: "available",
   };
 };
 
-export const updateCarHandler = async (id, request) => {
+export const updateCarHandler = async (id, request, files, user) => {
   const validated = validate(updateCarSchema, request);
   const {
-    user_id,
     car_name,
     brand,
     year,
     mileage,
     description,
     price,
-    address,
-    image_url,
     status,
+    address,
   } = validated;
+
+  const user_id = user.id;
+
+  const imageUrls =
+    files?.map(
+      (file) => `http://localhost:7777/uploads/cars/${file.filename}`
+    ) || [];
 
   await pool.query(
     `UPDATE cars 
-     SET user_id=?, car_name=?, brand=?, year=?, mileage=?, description=?, price=?, address=?, image_url=?, status=? 
+     SET user_id=?, car_name=?, brand=?, year=?, mileage=?, 
+         description=?, price=?, status=?, address=?, image_url=? 
      WHERE id=?`,
     [
       user_id,
@@ -102,18 +106,14 @@ export const updateCarHandler = async (id, request) => {
       mileage,
       description,
       price,
-      address,
-      image_url,
       status,
+      address,
+      JSON.stringify(imageUrls),
       id,
     ]
   );
 
-  const [updatedCar] = await pool.query(
-    `SELECT id, user_id, car_name, brand, year, mileage, description, price, address, image_url, status 
-     FROM cars WHERE id=?`,
-    [id]
-  );
+  const [updatedCar] = await pool.query(`SELECT * FROM cars WHERE id=?`, [id]);
 
   return updatedCar[0];
 };

@@ -28,12 +28,19 @@ export const getCarByIdHandler = async (req, res, next) => {
 };
 
 export const createCarHandler = async (req, res, next) => {
+  console.log("req.body =", req.body);
+  console.log("req.files =", req.files);
+  console.log("req.user =", req.user);
   try {
-    const response = await carService.createCarHandler(req.body);
+    const response = await carService.createCarHandler(
+      req.body,
+      req.files,
+      req.user
+    );
 
     res.status(201).json({
       status: "success",
-      message: "Car create successfully",
+      message: "Car created successfully",
       data: response,
     });
   } catch (error) {
@@ -44,11 +51,17 @@ export const createCarHandler = async (req, res, next) => {
 export const updateCarHandler = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const response = await carService.updateCarHandler(id, req.body);
 
-    res.status(201).json({
+    const response = await carService.updateCarHandler(
+      id,
+      req.body,
+      req.files,
+      req.user
+    );
+
+    res.status(200).json({
       status: "success",
-      message: "Car update successfully",
+      message: "Car updated successfully",
       data: response,
     });
   } catch (error) {
