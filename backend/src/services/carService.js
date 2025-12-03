@@ -30,9 +30,10 @@ export const getCarByIdHandler = async (id) => {
 };
 
 export const createCarHandler = async (request) => {
+  const user_id = request.user.id; 
+
   const validated = validate(createCarSchema, request);
   const {
-    user_id,
     car_name,
     brand,
     year,

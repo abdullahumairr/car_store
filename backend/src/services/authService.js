@@ -2,24 +2,18 @@ import { pool } from "../config/db.js";
 import { loginSchema, registerSchema } from "../validations/authValidation.js";
 import validate from "../validations/validate.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { ResponseError } from "../errors/responseError.js";
 
 export const register = async (request) => {
   const validated = validate(registerSchema, request);
 
-  const {
-    fullname,
-    username,
-    email,
-    password,
-    address,
-    phone_number,
-    age,
-  } = validated;
+  const { fullname, username, email, password, address, phone_number, age } =
+    validated;
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const role = "user"; 
+  const role = "user";
 
   const [users] = await pool.query(
     "INSERT INTO users (fullname, username, email, password, role, address, phone_number, age) VALUES (?,?,?,?,?,?,?,?)",
@@ -28,7 +22,7 @@ export const register = async (request) => {
       username,
       email,
       hashedPassword,
-      role, 
+      role,
       address,
       phone_number,
       age,
@@ -67,14 +61,24 @@ export const login = async (request) => {
     throw new ResponseError(401, "email atau password salah");
   }
 
+ const token = jwt.sign(
+    {
+      id: user.id,
+      role: user.role,
+      email: user.email,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  )
+
   return {
-    id: user.id,
-    fullname: user.fullname,
-    username: user.username,
-    email: user.email,
-    role: user.role,
-    address: user.address,
-    phone_number: user.phone_number,
-    age: user.age,
+    message: "login berhasil",
+    token,
+    user: {
+      id: user.id,
+      fullname: user.fullname,
+      role: user.role,
+      email: user.email,
+    }
   };
 };
