@@ -1,268 +1,143 @@
-import { useState } from "react";
+import { useState } from 'react'
 
 function Sidebar({ filters, onFilterChange }) {
-  const [priceRange, setPriceRange] = useState(
-    filters.priceRange || [0, 1000000000]
-  );
-  const [mileageRange, setMileageRange] = useState(
-    filters.mileageRange || [0, 500000]
-  );
-
-  const locations = [
-    "Jakarta Selatan",
-    "Jakarta Pusat",
-    "Jakarta Utara",
-    "Jakarta Barat",
-    "Jakarta Timur",
-    "Tangerang",
-    "Bekasi",
-    "Depok",
-    "Bogor",
-  ];
+  const [priceRange, setPriceRange] = useState(filters.priceRange || [0, 1000000000])
+  const [mileageRange, setMileageRange] = useState(filters.mileageRange || [0, 500000])
 
   const brands = [
-    "Toyota",
-    "Honda",
-    "Suzuki",
-    "Daihatsu",
-    "Mitsubishi",
-    "Nissan",
-    "Mazda",
-    "BMW",
-    "Mercedes-Benz",
-    "Hyundai",
-  ];
+    'Toyota',
+    'Honda',
+    'Suzuki',
+    'Daihatsu',
+    'Mitsubishi',
+    'Nissan',
+    'Mazda',
+    'BMW',
+    'Mercedes-Benz',
+    'Hyundai'
+  ]
 
   const handlePriceChange = (index, value) => {
-    const newRange = [...priceRange];
-    newRange[index] = parseInt(value);
-    setPriceRange(newRange);
-    onFilterChange({ ...filters, priceRange: newRange });
-  };
+    const newRange = [...priceRange]
+    newRange[index] = parseInt(value)
+    setPriceRange(newRange)
+    onFilterChange({ ...filters, priceRange: newRange })
+  }
 
   const handleMileageChange = (index, value) => {
-    const newRange = [...mileageRange];
-    newRange[index] = parseInt(value);
-    setMileageRange(newRange);
-    onFilterChange({ ...filters, mileageRange: newRange });
-  };
+    const newRange = [...mileageRange]
+    newRange[index] = parseInt(value)
+    setMileageRange(newRange)
+    onFilterChange({ ...filters, mileageRange: newRange })
+  }
 
-  const handleLocationChange = (location) => {
-    const currentLocations = filters.locations || [];
-    const newLocations = currentLocations.includes(location)
-      ? currentLocations.filter((l) => l !== location)
-      : [...currentLocations, location];
-    onFilterChange({ ...filters, locations: newLocations });
-  };
 
   const handleBrandChange = (brand) => {
-    const currentBrands = filters.brands || [];
+    const currentBrands = filters.brands || []
     const newBrands = currentBrands.includes(brand)
-      ? currentBrands.filter((b) => b !== brand)
-      : [...currentBrands, brand];
-    onFilterChange({ ...filters, brands: newBrands });
-  };
+      ? currentBrands.filter(b => b !== brand)
+      : [...currentBrands, brand]
+    onFilterChange({ ...filters, brands: newBrands })
+  }
 
   const handleReset = () => {
-    setPriceRange([0, 1000000000]);
-    setMileageRange([0, 500000]);
+    setPriceRange([0, 1000000000])
+    setMileageRange([0, 500000])
     onFilterChange({
       locations: [],
       brands: [],
       priceRange: [0, 1000000000],
-      mileageRange: [0, 500000],
-    });
-  };
+      mileageRange: [0, 500000]
+    })
+  }
 
   return (
-    <div style={styles.sidebar}>
-      <div style={styles.header}>
-        <h3 style={styles.title}>Filter</h3>
-        <button style={styles.resetBtn} onClick={handleReset}>
+    <aside className="w-72 bg-white border-r border-gray-200 p-6 h-[calc(100vh-64px)] overflow-y-auto sticky top-16">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-xl font-semibold text-gray-800">Filter</h3>
+        <button 
+          onClick={handleReset}
+          className="text-sm text-blue-600 hover:text-blue-700 font-medium px-3 py-1.5 rounded hover:bg-blue-50 transition-colors"
+        >
           Reset
         </button>
       </div>
 
-      <div style={styles.section}>
-        <h4 style={styles.sectionTitle}>Lokasi</h4>
-        <div style={styles.checkboxList}>
-          {locations.map((location) => (
-            <label key={location} style={styles.checkboxLabel}>
-              <input
-                type="checkbox"
-                checked={(filters.locations || []).includes(location)}
-                onChange={() => handleLocationChange(location)}
-                style={styles.checkbox}
-              />
-              <span style={styles.checkboxText}>{location}</span>
-            </label>
-          ))}
-        </div>
-      </div>
 
-      <div style={styles.section}>
-        <h4 style={styles.sectionTitle}>Harga</h4>
-        <div style={styles.rangeInputs}>
+      {/* Harga */}
+      <div className="mb-8 pb-6 border-b border-gray-200">
+        <h4 className="text-base font-semibold text-gray-800 mb-4">Harga</h4>
+        <div className="flex items-center gap-2 mb-2">
           <input
             type="number"
             placeholder="Min"
             value={priceRange[0]}
             onChange={(e) => handlePriceChange(0, e.target.value)}
-            style={styles.rangeInput}
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none"
           />
-          <span>-</span>
+          <span className="text-gray-500">-</span>
           <input
             type="number"
             placeholder="Max"
             value={priceRange[1]}
             onChange={(e) => handlePriceChange(1, e.target.value)}
-            style={styles.rangeInput}
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none"
           />
         </div>
-        <div style={styles.priceLabels}>
-          <span style={styles.priceLabel}>
-            Rp {priceRange[0].toLocaleString()}
-          </span>
-          <span style={styles.priceLabel}>
-            Rp {priceRange[1].toLocaleString()}
-          </span>
+        <div className="flex justify-between text-xs text-gray-600">
+          <span>Rp {priceRange[0].toLocaleString()}</span>
+          <span>Rp {priceRange[1].toLocaleString()}</span>
         </div>
       </div>
 
-      <div style={styles.section}>
-        <h4 style={styles.sectionTitle}>Kilometer</h4>
-        <div style={styles.rangeInputs}>
+      {/* Kilometer */}
+      <div className="mb-8 pb-6 border-b border-gray-200">
+        <h4 className="text-base font-semibold text-gray-800 mb-4">Kilometer</h4>
+        <div className="flex items-center gap-2 mb-2">
           <input
             type="number"
             placeholder="Min"
             value={mileageRange[0]}
             onChange={(e) => handleMileageChange(0, e.target.value)}
-            style={styles.rangeInput}
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none"
           />
-          <span>-</span>
+          <span className="text-gray-500">-</span>
           <input
             type="number"
             placeholder="Max"
             value={mileageRange[1]}
             onChange={(e) => handleMileageChange(1, e.target.value)}
-            style={styles.rangeInput}
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none"
           />
         </div>
-        <div style={styles.priceLabels}>
-          <span style={styles.priceLabel}>
-            {mileageRange[0].toLocaleString()} km
-          </span>
-          <span style={styles.priceLabel}>
-            {mileageRange[1].toLocaleString()} km
-          </span>
+        <div className="flex justify-between text-xs text-gray-600">
+          <span>{mileageRange[0].toLocaleString()} km</span>
+          <span>{mileageRange[1].toLocaleString()} km</span>
         </div>
       </div>
 
-      <div style={styles.section}>
-        <h4 style={styles.sectionTitle}>Brand</h4>
-        <div style={styles.checkboxList}>
-          {brands.map((brand) => (
-            <label key={brand} style={styles.checkboxLabel}>
+      {/* Brand */}
+      <div className="mb-8">
+        <h4 className="text-base font-semibold text-gray-800 mb-4">Brand</h4>
+        <div className="flex flex-col gap-3">
+          {brands.map(brand => (
+            <label key={brand} className="flex items-center gap-2 cursor-pointer group">
               <input
                 type="checkbox"
                 checked={(filters.brands || []).includes(brand)}
                 onChange={() => handleBrandChange(brand)}
-                style={styles.checkbox}
+                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
               />
-              <span style={styles.checkboxText}>{brand}</span>
+              <span className="text-sm text-gray-700 group-hover:text-gray-900">
+                {brand}
+              </span>
             </label>
           ))}
         </div>
       </div>
-    </div>
-  );
+    </aside>
+  )
 }
 
-const styles = {
-  sidebar: {
-    width: "280px",
-    backgroundColor: "white",
-    borderRight: "1px solid #e5e5e5",
-    padding: "24px",
-    height: "calc(100vh - 60px)",
-    overflowY: "auto",
-    position: "sticky",
-    top: "60px",
-  },
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: "24px",
-  },
-  title: {
-    fontSize: "20px",
-    fontWeight: "600",
-    color: "#333",
-  },
-  resetBtn: {
-    fontSize: "14px",
-    color: "#0066cc",
-    backgroundColor: "transparent",
-    padding: "6px 12px",
-    borderRadius: "4px",
-    fontWeight: "500",
-  },
-  section: {
-    marginBottom: "32px",
-    paddingBottom: "24px",
-    borderBottom: "1px solid #e5e5e5",
-  },
-  sectionTitle: {
-    fontSize: "16px",
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: "16px",
-  },
-  checkboxList: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "12px",
-  },
-  checkboxLabel: {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    cursor: "pointer",
-    fontSize: "14px",
-    color: "#333",
-  },
-  checkbox: {
-    width: "16px",
-    height: "16px",
-    cursor: "pointer",
-  },
-  checkboxText: {
-    fontSize: "14px",
-  },
-  rangeInputs: {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    marginBottom: "8px",
-  },
-  rangeInput: {
-    flex: 1,
-    padding: "8px",
-    border: "1px solid #ddd",
-    borderRadius: "4px",
-    fontSize: "14px",
-  },
-  priceLabels: {
-    display: "flex",
-    justifyContent: "space-between",
-    fontSize: "12px",
-    color: "#666",
-  },
-  priceLabel: {
-    fontSize: "12px",
-    color: "#666",
-  },
-};
-
-export default Sidebar;
+export default Sidebar

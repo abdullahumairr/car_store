@@ -1,138 +1,90 @@
 import { useNavigate } from "react-router-dom";
-import { getImageUrl } from "../../services/api";
 import { MapPin, Gauge } from "lucide-react";
+import { normalizeCarImages } from "../../services/api";
 
 function CarCard({ car }) {
   const navigate = useNavigate();
+
+  if (!car) {
+    console.error("CarCard: car prop is undefined");
+    return null;
+  }
 
   const handleClick = () => {
     navigate(`/car/${car.id}`);
   };
 
-  const images =
-    typeof car.images === "string" ? JSON.parse(car.images) : car.images;
-  const firstImage = images && images.length > 0 ? images[0] : null;
+  const images = normalizeCarImages(car);
+  const firstImage = images.length > 0 ? images[0] : null;
+
+  // Fallback image URL
+  const getSafeImageUrl = (url) => {
+    if (!url) return "https://via.placeholder.com/300x200?text=No+Image";
+
+    // Jika URL punya karakter aneh, encode
+    try {
+      new URL(url);
+      return url;
+    } catch {
+      // Jika URL invalid, gunakan placeholder
+      return "https://via.placeholder.com/300x200?text=Invalid+URL";
+    }
+  };
 
   return (
-    <div style={styles.card} onClick={handleClick}>
-      <div style={styles.imageContainer}>
-        {firstImage ? (
-          <img
-            src={getImageUrl(firstImage)}
-            alt={car.car_name}
-            style={styles.image}
-          />
-        ) : (
-          <div style={styles.noImage}>No Image</div>
+    <div
+      onClick={handleClick}
+      className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-200 cursor-pointer"
+    >
+      <div className="relative w-full h-48 bg-gray-100">
+        <img
+          src={getSafeImageUrl(firstImage)}
+          alt={car.car_name || "Car"}
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            console.error("Image load failed, using fallback:", firstImage);
+            e.target.onerror = null;
+            e.target.src =
+              "https://via.placeholder.com/300x200?text=Image+Error";
+          }}
+        />
+
+        {String(car.status || "").toLowerCase() === "sold" && (
+          <div className="absolute top-3 right-3 bg-red-600/90 text-white px-3 py-1.5 rounded text-xs font-semibold">
+            TERJUAL
+          </div>
         )}
-        {car.status === "sold" && <div style={styles.soldBadge}>TERJUAL</div>}
       </div>
 
-      <div style={styles.content}>  
-        <h3 style={styles.title}>{car.car_name}</h3>
-        <p style={styles.brand}>
-          {car.brand} • {car.year}
+      <div className="p-4">
+        <h3 className="text-lg font-semibold text-gray-800 mb-1 truncate">
+          {car.car_name ?? "-"}
+        </h3>
+        <p className="text-sm text-gray-600 mb-3">
+          {car.brand ?? "-"} • {car.year ?? "-"}
         </p>
 
-        <div style={styles.info}>
-          <div style={styles.infoItem}>
-            <Gauge size={16} color="#666" />
-            <span>{parseInt(car.mileage).toLocaleString()} km</span>
+        <div className="flex flex-col gap-2 mb-3">
+          <div className="flex items-center gap-2 text-xs text-gray-600">
+            <Gauge size={16} className="text-gray-500" />
+            <span>
+              {car.mileage
+                ? `${parseInt(car.mileage).toLocaleString()} km`
+                : "-"}
+            </span>
           </div>
-          <div style={styles.infoItem}>
-            <MapPin size={16} color="#666" />
-            <span>{car.address}</span>
+          <div className="flex items-center gap-2 text-xs text-gray-600">
+            <MapPin size={16} className="text-gray-500" />
+            <span className="truncate">{car.address ?? "-"}</span>
           </div>
         </div>
 
-        <div style={styles.price}>
-          Rp {parseInt(car.price).toLocaleString()}
+        <div className="text-xl font-bold text-blue-600 mt-2">
+          Rp {car.price ? parseInt(car.price).toLocaleString() : "-"}
         </div>
       </div>
     </div>
   );
 }
-
-const styles = {
-  card: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    overflow: "hidden",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-    cursor: "pointer",
-    transition: "transform 0.2s, box-shadow 0.2s",
-    ":hover": {
-      transform: "translateY(-4px)",
-      boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-    },
-  },
-  imageContainer: {
-    width: "100%",
-    height: "200px",
-    position: "relative",
-    backgroundColor: "#f5f5f5",
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-    objectFit: "cover",
-  },
-  noImage: {
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "#999",
-    fontSize: "14px",
-  },
-  soldBadge: {
-    position: "absolute",
-    top: "12px",
-    right: "12px",
-    backgroundColor: "rgba(255, 0, 0, 0.9)",
-    color: "white",
-    padding: "6px 12px",
-    borderRadius: "4px",
-    fontSize: "12px",
-    fontWeight: "600",
-  },
-  content: {
-    padding: "16px",
-  },
-  title: {
-    fontSize: "18px",
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: "4px",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  },
-  brand: {
-    fontSize: "14px",
-    color: "#666",
-    marginBottom: "12px",
-  },
-  info: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-    marginBottom: "12px",
-  },
-  infoItem: {
-    display: "flex",
-    alignItems: "center",
-    gap: "6px",
-    fontSize: "13px",
-    color: "#666",
-  },
-  price: {
-    fontSize: "20px",
-    fontWeight: "700",
-    color: "#0066cc",
-    marginTop: "8px",
-  },
-};
 
 export default CarCard;

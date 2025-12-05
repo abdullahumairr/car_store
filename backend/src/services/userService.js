@@ -11,7 +11,6 @@ export const getAllUsersHandler = async () => {
   const [users] = await pool.query(
     "SELECT id, fullname, username, email, role, address, phone_number, age FROM users"
   );
-
   return users;
 };
 
@@ -26,7 +25,6 @@ export const getUserByIdHandler = async (id) => {
   }
 
   return users[0];
-  ``;
 };
 
 export const createUsersHandler = async (request) => {
@@ -36,20 +34,18 @@ export const createUsersHandler = async (request) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const [users] = await pool.query(
+  const [insert] = await pool.query(
     "INSERT INTO users (fullname, username, email, password, role) VALUES (?,?,?,?,?)",
     [fullname, username, email, hashedPassword, role]
   );
 
-  const newUser = {
-    id: users.insertId,
+  return {
+    id: insert.insertId,
     fullname,
     username,
     email,
     role,
   };
-
-  return newUser;
 };
 
 export const updateUsersHandler = async (id, request) => {
@@ -66,39 +62,57 @@ export const updateUsersHandler = async (id, request) => {
     age,
   } = validated;
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  let hashedPassword = null;
+
+  // kalau admin tidak mengisi password → jangan update password
+  if (password) {
+    hashedPassword = await bcrypt.hash(password, 10);
+  }
 
   const [result] = await pool.query(
-    "UPDATE users SET fullname=?, username=?, email=?, password=?, role=?, address=?, phone_number=?, age=? WHERE id=?",
+    `
+    UPDATE users 
+    SET fullname = COALESCE(?, fullname),
+        username = COALESCE(?, username),
+        email = COALESCE(?, email),
+        password = COALESCE(?, password),
+        role = COALESCE(?, role),
+        address = COALESCE(?, address),
+        phone_number = COALESCE(?, phone_number),
+        age = COALESCE(?, age)
+    WHERE id = ?
+  `,
     [
-      fullname,
-      username,
-      email,
+      fullname || null,
+      username || null,
+      email || null,
       hashedPassword,
-      role,
-      address,
-      phone_number,
-      age,
+      role || null,
+      address || null,
+      phone_number || null,
+      age || null,
       id,
     ]
   );
 
   if (result.affectedRows === 0) {
-    throw new ResponseError(404, "Product not found");
+    throw new ResponseError(404, "user not found");
   }
 
   const [userUpdate] = await pool.query(
-    "SELECT fullname, username, email, role, address, phone_number, age FROM users WHERE id=?",
+    "SELECT id, fullname, username, email, role, address, phone_number, age FROM users WHERE id=?",
     [id]
   );
 
   return userUpdate[0];
 };
 
-export const deleteUsersHandler = async (id, request) => {
-  const [deleteUsers] = await pool.query("DELETE FROM users WHERE id=?", [id]);
+export const deleteUsersHandler = async (id) => {
+  const [del] = await pool.query("DELETE FROM users WHERE id=?", [id]);
 
-  if (deleteUsers.affectedRows === 0) {
+  if (del.affectedRows === 0) {
     throw new ResponseError(404, "user not found");
   }
+
+  return true;
 };

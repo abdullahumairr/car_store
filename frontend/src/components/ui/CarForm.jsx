@@ -1,5 +1,6 @@
+// src/components/ui/CarForm.jsx
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { X, Plus, Trash } from "lucide-react";
 
 function CarForm({ onSubmit, onClose, initialData = null }) {
   const [formData, setFormData] = useState({
@@ -10,8 +11,10 @@ function CarForm({ onSubmit, onClose, initialData = null }) {
     description: "",
     price: "",
     address: "",
+    status: "available",
   });
-  const [images, setImages] = useState([]);
+
+  const [imageLinks, setImageLinks] = useState([""]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -24,40 +27,56 @@ function CarForm({ onSubmit, onClose, initialData = null }) {
         description: initialData.description || "",
         price: initialData.price?.toString() || "",
         address: initialData.address || "",
+        status: initialData.status || "available",
       });
+
+      // Handle link foto existing
+      try {
+        let parsed = Array.isArray(initialData.image_url)
+          ? initialData.image_url
+          : JSON.parse(initialData.image_url || "[]");
+
+        setImageLinks(parsed.length ? parsed : [""]);
+      } catch {
+        setImageLinks([""]);
+      }
     }
   }, [initialData]);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData((s) => ({ ...s, [e.target.name]: e.target.value }));
   };
 
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    setImages(files);
+  const handleImageLinkChange = (index, value) => {
+    const updated = [...imageLinks];
+    updated[index] = value;
+    setImageLinks(updated);
+  };
+
+  const addImageField = () => {
+    if (imageLinks.length < 10) {
+      setImageLinks([...imageLinks, ""]);
+    }
+  };
+
+  const removeImageField = (index) => {
+    const updated = imageLinks.filter((_, i) => i !== index);
+    setImageLinks(updated.length ? updated : [""]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    const data = new FormData();
+    const filteredLinks = imageLinks.filter((link) => link.trim() !== "");
 
-    // Append all text fields
-    Object.keys(formData).forEach((key) => {
-      data.append(key, formData[key]);
-    });
-
-    // Append images
-    images.forEach((image) => {
-      data.append("images", image);
-    });
+    const payload = {
+      ...formData,
+      image_url: filteredLinks,
+    };
 
     try {
-      await onSubmit(data);
+      await onSubmit(payload); // JSON payload
       onClose();
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -68,126 +87,199 @@ function CarForm({ onSubmit, onClose, initialData = null }) {
   };
 
   return (
-    <div style={styles.overlay}>
-      <div style={styles.modal}>
-        <div style={styles.header}>
-          <h2 style={styles.title}>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-5">
+      <div className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-auto shadow-2xl">
+        {/* HEADER */}
+        <div className="flex justify-between items-center px-6 py-5 border-b border-gray-200">
+          <h2 className="text-2xl font-semibold text-gray-800">
             {initialData ? "Edit Mobil" : "Tambah Mobil Baru"}
           </h2>
-          <button style={styles.closeBtn} onClick={onClose}>
-            <X size={24} />
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-lg"
+          >
+            <X size={24} className="text-gray-600" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} style={styles.form}>
-          <div style={styles.formGrid}>
-            <div style={styles.inputGroup}>
-              <label style={styles.label}>Nama Mobil *</label>
+        <form onSubmit={handleSubmit} className="p-6">
+          {/* INPUT DATA */}
+          <div className="grid grid-cols-2 gap-5 mb-5">
+            {/* Nama Mobil */}
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium text-gray-700">
+                Nama Mobil *
+              </label>
               <input
                 type="text"
                 name="car_name"
                 value={formData.car_name}
                 onChange={handleChange}
-                style={styles.input}
+                className="px-3 py-2.5 border border-gray-300 rounded-lg text-sm"
                 required
               />
             </div>
 
-            <div style={styles.inputGroup}>
-              <label style={styles.label}>Brand *</label>
+            {/* Brand */}
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium text-gray-700">
+                Brand *
+              </label>
               <input
                 type="text"
                 name="brand"
                 value={formData.brand}
                 onChange={handleChange}
-                style={styles.input}
+                className="px-3 py-2.5 border border-gray-300 rounded-lg text-sm"
                 required
               />
             </div>
 
-            <div style={styles.inputGroup}>
-              <label style={styles.label}>Tahun *</label>
+            {/* Tahun */}
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium text-gray-700">
+                Tahun *
+              </label>
               <input
                 type="number"
                 name="year"
                 value={formData.year}
                 onChange={handleChange}
-                style={styles.input}
+                className="px-3 py-2.5 border border-gray-300 rounded-lg text-sm"
                 required
               />
             </div>
 
-            <div style={styles.inputGroup}>
-              <label style={styles.label}>Kilometer *</label>
+            {/* Mileage */}
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium text-gray-700">
+                Kilometer *
+              </label>
               <input
                 type="number"
                 name="mileage"
                 value={formData.mileage}
                 onChange={handleChange}
-                style={styles.input}
+                className="px-3 py-2.5 border border-gray-300 rounded-lg text-sm"
                 required
               />
             </div>
 
-            <div style={styles.inputGroup}>
-              <label style={styles.label}>Harga *</label>
+            {/* Harga */}
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium text-gray-700">
+                Harga *
+              </label>
               <input
                 type="number"
                 name="price"
                 value={formData.price}
                 onChange={handleChange}
-                style={styles.input}
+                className="px-3 py-2.5 border border-gray-300 rounded-lg text-sm"
                 required
               />
             </div>
 
-            <div style={styles.inputGroup}>
-              <label style={styles.label}>Lokasi *</label>
+            {/* Lokasi */}
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium text-gray-700">
+                Lokasi *
+              </label>
               <input
                 type="text"
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
-                style={styles.input}
+                className="px-3 py-2.5 border border-gray-300 rounded-lg text-sm"
                 required
               />
             </div>
           </div>
 
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>Deskripsi *</label>
+          {/* DESKRIPSI */}
+          <div className="flex flex-col gap-2 mb-5">
+            <label className="text-sm font-medium text-gray-700">
+              Deskripsi *
+            </label>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
-              style={styles.textarea}
               rows="4"
+              className="px-3 py-2.5 border border-gray-300 rounded-lg text-sm"
               required
             />
           </div>
 
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>
-              Foto Mobil * {!initialData && "(Maksimal 10 foto)"}
+          {/* LINK FOTO */}
+          <div className="flex flex-col gap-2 mb-5">
+            <label className="text-sm font-medium text-gray-700">
+              Link Foto Mobil (maks 10)
             </label>
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleImageChange}
-              style={styles.fileInput}
-              required={!initialData}
-            />
-            {images.length > 0 && (
-              <p style={styles.fileInfo}>{images.length} file dipilih</p>
+
+            {imageLinks.map((link, index) => (
+              <div key={index} className="flex gap-3">
+                <input
+                  type="text"
+                  placeholder="https://example.com/image.jpg"
+                  value={link}
+                  onChange={(e) => handleImageLinkChange(index, e.target.value)}
+                  className="flex-1 px-3 py-2.5 border border-gray-300 rounded-lg text-sm"
+                />
+
+                {imageLinks.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeImageField(index)}
+                    className="p-2 bg-red-500 text-white rounded-lg"
+                  >
+                    <Trash size={18} />
+                  </button>
+                )}
+              </div>
+            ))}
+
+            {imageLinks.length < 10 && (
+              <button
+                type="button"
+                onClick={addImageField}
+                className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg text-sm font-medium hover:bg-gray-200 w-fit"
+              >
+                <Plus size={18} /> Tambah Link Foto
+              </button>
             )}
           </div>
 
-          <div style={styles.actions}>
-            <button type="button" style={styles.cancelBtn} onClick={onClose}>
+          {/* STATUS */}
+          <div className="flex flex-col gap-2 mb-5">
+            <label className="text-sm font-medium text-gray-700">
+              Status *
+            </label>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="px-3 py-2.5 border border-gray-300 rounded-lg text-sm"
+            >
+              <option value="available">Tersedia</option>
+              <option value="sold">Terjual</option>
+            </select>
+          </div>
+
+          {/* BUTTON */}
+          <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-gray-200">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold"
+            >
               Batal
             </button>
-            <button type="submit" style={styles.submitBtn} disabled={loading}>
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold disabled:opacity-50"
+            >
               {loading ? "Menyimpan..." : initialData ? "Update" : "Simpan"}
             </button>
           </div>
@@ -196,115 +288,5 @@ function CarForm({ onSubmit, onClose, initialData = null }) {
     </div>
   );
 }
-
-const styles = {
-  overlay: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 1000,
-    padding: "20px",
-  },
-  modal: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    width: "100%",
-    maxWidth: "800px",
-    maxHeight: "90vh",
-    overflow: "auto",
-    boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
-  },
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "24px",
-    borderBottom: "1px solid #e5e5e5",
-  },
-  title: {
-    fontSize: "24px",
-    fontWeight: "600",
-    color: "#333",
-  },
-  closeBtn: {
-    padding: "8px",
-    backgroundColor: "transparent",
-    color: "#666",
-  },
-  form: {
-    padding: "24px",
-  },
-  formGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(2, 1fr)",
-    gap: "20px",
-    marginBottom: "20px",
-  },
-  inputGroup: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-  },
-  label: {
-    fontSize: "14px",
-    fontWeight: "500",
-    color: "#333",
-  },
-  input: {
-    padding: "12px",
-    border: "1px solid #ddd",
-    borderRadius: "6px",
-    fontSize: "14px",
-  },
-  textarea: {
-    padding: "12px",
-    border: "1px solid #ddd",
-    borderRadius: "6px",
-    fontSize: "14px",
-    resize: "vertical",
-    fontFamily: "inherit",
-  },
-  fileInput: {
-    padding: "8px",
-    border: "1px solid #ddd",
-    borderRadius: "6px",
-    fontSize: "14px",
-  },
-  fileInfo: {
-    fontSize: "13px",
-    color: "#666",
-    marginTop: "4px",
-  },
-  actions: {
-    display: "flex",
-    justifyContent: "flex-end",
-    gap: "12px",
-    marginTop: "24px",
-    paddingTop: "24px",
-    borderTop: "1px solid #e5e5e5",
-  },
-  cancelBtn: {
-    padding: "12px 24px",
-    backgroundColor: "#f5f5f5",
-    color: "#333",
-    borderRadius: "6px",
-    fontSize: "14px",
-    fontWeight: "600",
-  },
-  submitBtn: {
-    padding: "12px 24px",
-    backgroundColor: "#0066cc",
-    color: "white",
-    borderRadius: "6px",
-    fontSize: "14px",
-    fontWeight: "600",
-  },
-};
 
 export default CarForm;

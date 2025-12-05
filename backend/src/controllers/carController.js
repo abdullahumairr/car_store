@@ -28,13 +28,9 @@ export const getCarByIdHandler = async (req, res, next) => {
 };
 
 export const createCarHandler = async (req, res, next) => {
-  console.log("req.body =", req.body);
-  console.log("req.files =", req.files);
-  console.log("req.user =", req.user);
   try {
     const response = await carService.createCarHandler(
       req.body,
-      req.files,
       req.user
     );
 
@@ -55,7 +51,6 @@ export const updateCarHandler = async (req, res, next) => {
     const response = await carService.updateCarHandler(
       id,
       req.body,
-      req.files,
       req.user
     );
 

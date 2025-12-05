@@ -2,6 +2,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
+import { fileURLToPath } from "url";
+import path from "path";
 import { testConnection } from "./config/db.js";
 import useRouter from "./routes/userRoute.js";
 import carRouter from "./routes/carRoute.js";

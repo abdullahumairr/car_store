@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getCarById, getImageUrl } from "../services/api";
+import { getCarById, normalizeCarImages } from "../services/api"; // <-- IMPORT
 import {
   ChevronLeft,
   ChevronRight,
@@ -29,12 +29,15 @@ function CarDetail({ user, setUser }) {
       const response = await getCarById(id);
       setCar(response.data);
 
-      // Parse images
-      const parsedImages =
-        typeof response.data.images === "string"
-          ? JSON.parse(response.data.images)
-          : response.data.images;
+      // GUNAKAN FUNCTION normalizeCarImages DI SINI
+      const parsedImages = normalizeCarImages(response.data);
       setImages(parsedImages || []);
+
+      console.log("CarDetail debug:", {
+        carId: response.data.id,
+        rawImageUrl: response.data.image_url,
+        parsedImages: parsedImages,
+      });
     } catch (error) {
       console.error("Error fetching car detail:", error);
       alert("Mobil tidak ditemukan");
@@ -66,14 +69,16 @@ function CarDetail({ user, setUser }) {
 
   if (loading) {
     return (
-      <div style={styles.container}>
+      <div className="min-h-screen bg-[#f5f5f5]">
         <Navbar
           user={user}
           setUser={setUser}
           searchQuery=""
           onSearchChange={() => {}}
         />
-        <div style={styles.loading}>Loading...</div>
+        <div className="text-center py-[60px] text-base text-[#666]">
+          Loading...
+        </div>
       </div>
     );
   }
@@ -83,7 +88,7 @@ function CarDetail({ user, setUser }) {
   }
 
   return (
-    <div style={styles.container}>
+    <div className="min-h-screen bg-[#f5f5f5]">
       <Navbar
         user={user}
         setUser={setUser}
@@ -91,150 +96,181 @@ function CarDetail({ user, setUser }) {
         onSearchChange={() => {}}
       />
 
-      <div style={styles.content}>
-        <button style={styles.backBtn} onClick={() => navigate(-1)}>
+      <div className="max-w-[1400px] mx-auto px-6 py-6">
+        <button
+          onClick={() => navigate(-1)}
+          className="bg-white px-5 py-2.5 rounded-md text-sm font-medium text-[#333] mb-6 shadow-[0_2px_4px_rgba(0,0,0,0.1)] border-0 cursor-pointer"
+        >
           ← Kembali
         </button>
 
-        <div style={styles.detailContainer}>
-          <div style={styles.leftSection}>
+        <div className="grid grid-cols-[1fr_400px] gap-6">
+          <div className="flex flex-col gap-6">
             {/* Image Gallery */}
-            <div style={styles.imageGallery}>
+            <div className="relative w-full h-[500px] bg-black rounded-xl overflow-hidden">
               {images.length > 0 ? (
                 <>
                   <img
-                    src={getImageUrl(images[currentImageIndex])}
+                    src={images[currentImageIndex]}
                     alt={car.car_name}
-                    style={styles.mainImage}
+                    className="w-full h-full object-contain"
                   />
+
                   {images.length > 1 && (
                     <>
-                      <button style={styles.prevBtn} onClick={handlePrevImage}>
+                      <button
+                        onClick={handlePrevImage}
+                        className="absolute left-5 top-1/2 -translate-y-1/2 bg-black/50 text-white p-3 rounded-full flex items-center justify-center border-0 cursor-pointer"
+                      >
                         <ChevronLeft size={32} />
                       </button>
-                      <button style={styles.nextBtn} onClick={handleNextImage}>
+                      <button
+                        onClick={handleNextImage}
+                        className="absolute right-5 top-1/2 -translate-y-1/2 bg-black/50 text-white p-3 rounded-full flex items-center justify-center border-0 cursor-pointer"
+                      >
                         <ChevronRight size={32} />
                       </button>
-                      <div style={styles.imageCounter}>
+                      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-[20px] text-sm font-medium">
                         {currentImageIndex + 1} / {images.length}
                       </div>
                     </>
                   )}
-                  <div style={styles.imageActions}>
-                    <button style={styles.iconBtn}>
+                  <div className="absolute top-5 right-5 flex gap-3">
+                    <button className="bg-black/50 text-white p-3 rounded-full flex items-center justify-center border-0 cursor-pointer">
                       <Share2 size={20} />
                     </button>
-                    <button style={styles.iconBtn}>
+                    <button className="bg-black/50 text-white p-3 rounded-full flex items-center justify-center border-0 cursor-pointer">
                       <Heart size={20} />
                     </button>
                   </div>
                 </>
               ) : (
-                <div style={styles.noImage}>No Image Available</div>
+                <div className="w-full h-full flex items-center justify-center text-white text-lg">
+                  No Image Available
+                </div>
               )}
             </div>
 
             {/* Car Info */}
-            <div style={styles.infoCard}>
-              <div style={styles.badges}>
-                <span style={styles.badge}>HIGHLIGHT</span>
+            <div className="bg-white rounded-xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
+              <div className="flex gap-2 mb-4">
+                <span className="bg-[#ffd700] text-[#333] px-3 py-1.5 rounded text-xs font-semibold">
+                  HIGHLIGHT
+                </span>
               </div>
 
-              <h1 style={styles.carName}>{car.car_name}</h1>
-              <p style={styles.carSubtitle}>
+              <h1 className="text-[28px] font-bold text-[#333] mb-2">
+                {car.car_name}
+              </h1>
+              <p className="text-base text-[#666] mb-4">
                 {car.brand} ({car.year})
               </p>
 
-              <div style={styles.specs}>
-                <div style={styles.specItem}>
+              <div className="flex gap-6 mb-6">
+                <div className="flex items-center gap-2 text-sm text-[#666]">
                   <Gauge size={18} color="#666" />
                   <span>{parseInt(car.mileage).toLocaleString()} KM</span>
                 </div>
-                <div style={styles.specItem}>
+                <div className="flex items-center gap-2 text-sm text-[#666]">
                   <span>AUTOMATIC</span>
                 </div>
               </div>
 
-              <div style={styles.divider} />
+              <div className="h-px bg-[#e5e5e5] my-6" />
 
-              <h3 style={styles.sectionTitle}>Ikhtisar</h3>
+              <h3 className="text-lg font-semibold text-[#333] mb-4">
+                Ikhtisar
+              </h3>
 
-              <div style={styles.overview}>
-                <div style={styles.overviewItem}>
+              <div className="flex flex-col gap-4 mb-6">
+                <div className="flex items-start gap-3">
                   <User size={20} color="#666" />
                   <div>
-                    <p style={styles.overviewLabel}>Penjual</p>
-                    <p style={styles.overviewValue}>--</p>
+                    <p className="text-[13px] text-[#999] mb-1">Penjual</p>
+                    <p className="text-sm text-[#333] font-medium">--</p>
                   </div>
                 </div>
 
-                <div style={styles.overviewItem}>
+                <div className="flex items-start gap-3">
                   <MapPin size={20} color="#666" />
                   <div>
-                    <p style={styles.overviewLabel}>Lokasi</p>
-                    <p style={styles.overviewValue}>{car.address}</p>
-                  </div>
-                </div>
-
-                <div style={styles.overviewItem}>
-                  <Gauge size={20} color="#666" />
-                  <div>
-                    <p style={styles.overviewLabel}>Kapasitas mesin</p>
-                    <p style={styles.overviewValue}>2.000 - 3.000 cc</p>
+                    <p className="text-[13px] text-[#999] mb-1">Lokasi</p>
+                    <p className="text-sm text-[#333] font-medium">
+                      {car.address}
+                    </p>
                   </div>
                 </div>
               </div>
 
-              <div style={styles.divider} />
+              <div className="h-px bg-[#e5e5e5] my-6" />
 
-              <h3 style={styles.sectionTitle}>Deskripsi</h3>
-              <p style={styles.description}>{car.description}</p>
+              <h3 className="text-lg font-semibold text-[#333] mb-4">
+                Deskripsi
+              </h3>
+              <p className="text-sm text-[#666] leading-relaxed whitespace-pre-wrap">
+                {car.description}
+              </p>
             </div>
           </div>
 
-          <div style={styles.rightSection}>
+          <div className="sticky top-20 h-fit">
             {/* Price Card */}
-            <div style={styles.priceCard}>
-              <div style={styles.price}>
+            <div className="bg-white rounded-xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
+              <div className="text-[32px] font-bold text-[#333] mb-5">
                 Rp {parseInt(car.price).toLocaleString()}
               </div>
 
-              <button style={styles.bookingBtn} onClick={handleBooking}>
+              <button
+                onClick={handleBooking}
+                className="w-full bg-[#0066cc] text-white py-3.5 rounded-lg text-base font-semibold mb-4 border-0 cursor-pointer"
+              >
                 🚗 Booking
               </button>
 
-              <div style={styles.contactInfo}>
-                <h4 style={styles.contactTitle}>Beli barang ini pakai</h4>
-                <div style={styles.contactBadge}>
+              <div className="bg-[#e3f2fd] p-4 rounded-lg mb-4">
+                <h4 className="text-sm font-semibold text-[#333] mb-3">
+                  Beli barang ini pakai
+                </h4>
+                <div className="bg-white p-3 rounded-md mb-2 text-[13px] text-[#333] leading-relaxed">
                   <span>
                     📱 Booking mobil, motor, atau handphone yang kamu mau.
                   </span>
                 </div>
-                <div style={styles.contactBadge}>
+                <div className="bg-white p-3 rounded-md mb-2 text-[13px] text-[#333] leading-relaxed">
                   <span>
                     ✅ Hindari penipuan. Uangmu tersimpan aman di OLX dan
                     terkirim setelah deal dengan Penjual.
                   </span>
                 </div>
-                <div style={styles.contactBadge}>
+                <div className="bg-white p-3 rounded-md text-[13px] text-[#333] leading-relaxed">
                   <span>
                     💯 Jaminan uang kembali 100%* jika tidak cocok atau COD.
                   </span>
                 </div>
               </div>
 
-              <div style={styles.seller}>
-                <div style={styles.sellerLogo}>
-                  <div style={styles.logoCircle}>D</div>
-                  <span style={styles.sellerName}>DEDE - FOCUS MOTOR</span>
+              <div className="mb-4">
+                <div className="flex items-center gap-3 p-3 bg-[#f5f5f5] rounded-lg">
+                  <div className="w-10 h-10 rounded-full bg-[#ff0000] text-white flex items-center justify-center text-lg font-semibold">
+                    D
+                  </div>
+                  <span className="text-sm font-semibold text-[#333]">
+                    DEDE - FOCUS MOTOR
+                  </span>
                 </div>
               </div>
 
-              <button style={styles.whatsappBtn} onClick={handleWhatsApp}>
+              <button
+                onClick={handleWhatsApp}
+                className="w-full bg-[#25D366] text-white py-3.5 rounded-lg text-sm font-semibold mb-3 border-0 cursor-pointer"
+              >
                 💬 WhatsApp
               </button>
 
-              <button style={styles.chatBtn} onClick={handleChat}>
+              <button
+                onClick={handleChat}
+                className="w-full bg-white text-[#0066cc] py-3.5 rounded-lg text-sm font-semibold border-2 border-[#0066cc] cursor-pointer"
+              >
                 💬 Chat Dengan Penjual
               </button>
             </div>
@@ -244,294 +280,5 @@ function CarDetail({ user, setUser }) {
     </div>
   );
 }
-
-const styles = {
-  container: {
-    minHeight: "100vh",
-    backgroundColor: "#f5f5f5",
-  },
-  content: {
-    maxWidth: "1400px",
-    margin: "0 auto",
-    padding: "24px",
-  },
-  backBtn: {
-    backgroundColor: "white",
-    padding: "10px 20px",
-    borderRadius: "6px",
-    fontSize: "14px",
-    fontWeight: "500",
-    color: "#333",
-    marginBottom: "24px",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-  },
-  detailContainer: {
-    display: "grid",
-    gridTemplateColumns: "1fr 400px",
-    gap: "24px",
-  },
-  leftSection: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "24px",
-  },
-  imageGallery: {
-    position: "relative",
-    width: "100%",
-    height: "500px",
-    backgroundColor: "black",
-    borderRadius: "12px",
-    overflow: "hidden",
-  },
-  mainImage: {
-    width: "100%",
-    height: "100%",
-    objectFit: "contain",
-  },
-  noImage: {
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "white",
-    fontSize: "18px",
-  },
-  prevBtn: {
-    position: "absolute",
-    left: "20px",
-    top: "50%",
-    transform: "translateY(-50%)",
-    backgroundColor: "rgba(0,0,0,0.5)",
-    color: "white",
-    padding: "12px",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  nextBtn: {
-    position: "absolute",
-    right: "20px",
-    top: "50%",
-    transform: "translateY(-50%)",
-    backgroundColor: "rgba(0,0,0,0.5)",
-    color: "white",
-    padding: "12px",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  imageCounter: {
-    position: "absolute",
-    bottom: "20px",
-    left: "50%",
-    transform: "translateX(-50%)",
-    backgroundColor: "rgba(0,0,0,0.7)",
-    color: "white",
-    padding: "8px 16px",
-    borderRadius: "20px",
-    fontSize: "14px",
-    fontWeight: "500",
-  },
-  imageActions: {
-    position: "absolute",
-    top: "20px",
-    right: "20px",
-    display: "flex",
-    gap: "12px",
-  },
-  iconBtn: {
-    backgroundColor: "rgba(0,0,0,0.5)",
-    color: "white",
-    padding: "12px",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  infoCard: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    padding: "24px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-  },
-  badges: {
-    display: "flex",
-    gap: "8px",
-    marginBottom: "16px",
-  },
-  badge: {
-    backgroundColor: "#ffd700",
-    color: "#333",
-    padding: "6px 12px",
-    borderRadius: "4px",
-    fontSize: "12px",
-    fontWeight: "600",
-  },
-  carName: {
-    fontSize: "28px",
-    fontWeight: "700",
-    color: "#333",
-    marginBottom: "8px",
-  },
-  carSubtitle: {
-    fontSize: "16px",
-    color: "#666",
-    marginBottom: "16px",
-  },
-  specs: {
-    display: "flex",
-    gap: "24px",
-    marginBottom: "24px",
-  },
-  specItem: {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    fontSize: "14px",
-    color: "#666",
-  },
-  divider: {
-    height: "1px",
-    backgroundColor: "#e5e5e5",
-    margin: "24px 0",
-  },
-  sectionTitle: {
-    fontSize: "18px",
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: "16px",
-  },
-  overview: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px",
-  },
-  overviewItem: {
-    display: "flex",
-    alignItems: "flex-start",
-    gap: "12px",
-  },
-  overviewLabel: {
-    fontSize: "13px",
-    color: "#999",
-    marginBottom: "4px",
-  },
-  overviewValue: {
-    fontSize: "14px",
-    color: "#333",
-    fontWeight: "500",
-  },
-  description: {
-    fontSize: "14px",
-    color: "#666",
-    lineHeight: "1.6",
-    whiteSpace: "pre-wrap",
-  },
-  rightSection: {
-    position: "sticky",
-    top: "80px",
-    height: "fit-content",
-  },
-  priceCard: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    padding: "24px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-  },
-  price: {
-    fontSize: "32px",
-    fontWeight: "700",
-    color: "#333",
-    marginBottom: "20px",
-  },
-  bookingBtn: {
-    width: "100%",
-    backgroundColor: "#0066cc",
-    color: "white",
-    padding: "14px",
-    borderRadius: "8px",
-    fontSize: "16px",
-    fontWeight: "600",
-    marginBottom: "16px",
-  },
-  contactInfo: {
-    backgroundColor: "#e3f2fd",
-    padding: "16px",
-    borderRadius: "8px",
-    marginBottom: "16px",
-  },
-  contactTitle: {
-    fontSize: "14px",
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: "12px",
-  },
-  contactBadge: {
-    backgroundColor: "white",
-    padding: "12px",
-    borderRadius: "6px",
-    marginBottom: "8px",
-    fontSize: "13px",
-    color: "#333",
-    lineHeight: "1.5",
-  },
-  seller: {
-    marginBottom: "16px",
-  },
-  sellerLogo: {
-    display: "flex",
-    alignItems: "center",
-    gap: "12px",
-    padding: "12px",
-    backgroundColor: "#f5f5f5",
-    borderRadius: "8px",
-  },
-  logoCircle: {
-    width: "40px",
-    height: "40px",
-    borderRadius: "50%",
-    backgroundColor: "#ff0000",
-    color: "white",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "18px",
-    fontWeight: "600",
-  },
-  sellerName: {
-    fontSize: "14px",
-    fontWeight: "600",
-    color: "#333",
-  },
-  whatsappBtn: {
-    width: "100%",
-    backgroundColor: "#25D366",
-    color: "white",
-    padding: "14px",
-    borderRadius: "8px",
-    fontSize: "14px",
-    fontWeight: "600",
-    marginBottom: "12px",
-  },
-  chatBtn: {
-    width: "100%",
-    backgroundColor: "white",
-    color: "#0066cc",
-    padding: "14px",
-    borderRadius: "8px",
-    fontSize: "14px",
-    fontWeight: "600",
-    border: "2px solid #0066cc",
-  },
-  loading: {
-    textAlign: "center",
-    padding: "60px 20px",
-    fontSize: "16px",
-    color: "#666",
-  },
-};
 
 export default CarDetail;
