@@ -1,147 +1,77 @@
 import { pool } from "../config/db.js";
-import { ResponseError } from "../errors/responseError.js";
-import {
-  createCarSchema,
-  updateCarSchema,
-} from "../validations/carValidation.js";
-import validate from "../validations/validate.js";
 
+// GET ALL
 export const getAllCarsHandler = async () => {
-  const [cars] = await pool.query(
-    `SELECT id, user_id, car_name, brand, year, mileage, description, price, status, image_url
-     FROM cars`
-  );
-  return cars;
+  const [rows] = await pool.query("SELECT * FROM cars ORDER BY id DESC");
+  return rows;
 };
 
+// GET BY ID
 export const getCarByIdHandler = async (id) => {
-  const [cars] = await pool.query(
-    `SELECT id, user_id, car_name, brand, year, mileage, description, price, status, address, image_url 
-     FROM cars WHERE id=?`,
-    [id]
-  );
-
-  if (cars.length === 0) throw new ResponseError(404, "car not found");
-
-  return cars[0];
+  const [rows] = await pool.query("SELECT * FROM cars WHERE id = ?", [id]);
+  if (rows.length === 0) throw new Error("Car not found");
+  return rows[0];
 };
 
-export const createCarHandler = async (request, user) => {
-  const validated = validate(createCarSchema, request);
-  const {
-    car_name,
-    brand,
-    year,
-    mileage,
-    description,
-    price,
-    address,
-    image_url,
-  } = validated;
-
-  const user_id = user.id;
-
-  // FIX: pakai link, bukan upload file
-  let images = [];
-  try {
-    images = Array.isArray(image_url)
-      ? image_url
-      : typeof image_url === "string"
-      ? JSON.parse(image_url)
-      : [];
-  } catch {
-    images = [];
-  }
+// CREATE
+export const createCarHandler = async (data, user) => {
+  const newData = {
+    ...data,
+    image_url: Array.isArray(data.image_url)
+      ? JSON.stringify(data.image_url)
+      : data.image_url,
+  };
 
   const [result] = await pool.query(
-    `INSERT INTO cars 
-    (user_id, car_name, brand, year, mileage, description, price, address, image_url) 
-    VALUES (?,?,?,?,?,?,?,?,?)`,
+    `INSERT INTO cars (user_id, car_name, brand, year, mileage, description, price, address, image_url)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
-      user_id,
-      car_name,
-      brand,
-      year,
-      mileage,
-      description,
-      price,
-      address,
-      JSON.stringify(images),
+      user.id,
+      newData.car_name,
+      newData.brand,
+      newData.year,
+      newData.mileage,
+      newData.description,
+      newData.price,
+      newData.address,
+      newData.image_url,
     ]
   );
 
-  return {
-    id: result.insertId,
-    car_name,
-    brand,
-    year,
-    mileage,
-    description,
-    price,
-    address,
-    image_url: images,
-    status: "available",
+  return { id: result.insertId, ...newData, user_id: user.id };
+};
+
+// UPDATE
+export const updateCarHandler = async (id, data, user) => {
+  const [car] = await pool.query("SELECT * FROM cars WHERE id = ?", [id]);
+  if (car.length === 0) throw new Error("Car not found");
+
+  if (car[0].user_id !== user.id && user.role !== "admin") {
+    throw new Error("Access denied");
+  }
+
+  const newData = {
+    ...data,
+    image_url: Array.isArray(data.image_url)
+      ? JSON.stringify(data.image_url)
+      : data.image_url,
   };
+
+  await pool.query("UPDATE cars SET ? WHERE id = ?", [newData, id]);
+
+  return { id, ...newData };
 };
 
-export const updateCarHandler = async (id, request, user) => {
-  const validated = validate(updateCarSchema, request);
-  const {
-    car_name,
-    brand,
-    year,
-    mileage,
-    description,
-    price,
-    status,
-    address,
-    image_url,
-  } = validated;
+// DELETE
+export const deleteCarHandler = async (id, user) => {
+  const [car] = await pool.query("SELECT * FROM cars WHERE id = ?", [id]);
+  if (car.length === 0) throw new Error("Car not found");
 
-  const user_id = user.id;
-
-  // FIX: pakai link saja
-  let images = [];
-  try {
-    images = Array.isArray(image_url)
-      ? image_url
-      : typeof image_url === "string"
-      ? JSON.parse(image_url)
-      : [];
-  } catch {
-    images = [];
+  if (car[0].user_id !== user.id && user.role !== "admin") {
+    throw new Error("Access denied");
   }
 
-  await pool.query(
-    `UPDATE cars 
-     SET user_id=?, car_name=?, brand=?, year=?, mileage=?, 
-         description=?, price=?, status=?, address=?, image_url=? 
-     WHERE id=?`,
-    [
-      user_id,
-      car_name,
-      brand,
-      year,
-      mileage,
-      description,
-      price,
-      status,
-      address,
-      JSON.stringify(images),
-      id,
-    ]
-  );
+  await pool.query("DELETE FROM cars WHERE id = ?", [id]);
 
-  const [updatedCar] = await pool.query(`SELECT * FROM cars WHERE id=?`, [id]);
-  return updatedCar[0];
-};
-
-export const deleteCarHandler = async (id) => {
-  const [result] = await pool.query(`DELETE FROM cars WHERE id=?`, [id]);
-
-  if (result.affectedRows === 0) {
-    throw new ResponseError(404, "car not found");
-  }
-
-  return { message: "Car deleted successfully" };
+  return { message: "Car deleted" };
 };

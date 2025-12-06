@@ -1,6 +1,7 @@
 // src/components/ui/CarForm.jsx
 import { useState, useEffect } from "react";
 import { X, Plus, Trash } from "lucide-react";
+import { normalizeCarImages } from "../../services/api";
 
 function CarForm({ onSubmit, onClose, initialData = null }) {
   const [formData, setFormData] = useState({
@@ -29,17 +30,11 @@ function CarForm({ onSubmit, onClose, initialData = null }) {
         address: initialData.address || "",
         status: initialData.status || "available",
       });
+      
+      const images = normalizeCarImages(initialData);
 
-      // Handle link foto existing
-      try {
-        let parsed = Array.isArray(initialData.image_url)
-          ? initialData.image_url
-          : JSON.parse(initialData.image_url || "[]");
-
-        setImageLinks(parsed.length ? parsed : [""]);
-      } catch {
-        setImageLinks([""]);
-      }
+      // kalau kosong → minimal 1 input field
+      setImageLinks(images.length ? images : [""]);
     }
   }, [initialData]);
 

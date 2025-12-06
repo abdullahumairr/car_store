@@ -69,7 +69,7 @@ function AdminDashboard({ user, setUser }) {
 
       const normalized = carList.map((c) => ({
         ...c,
-        images: normalizeCarImages(c.image_url),
+        images: normalizeCarImages(c),
         status: c.status || "available",
       }));
 
@@ -101,9 +101,6 @@ function AdminDashboard({ user, setUser }) {
     }
   };
 
-  // =================================
-  // FILTER MOBIL
-  // =================================
   const applyFilters = () => {
     let filtered = [...cars];
 
@@ -136,9 +133,6 @@ function AdminDashboard({ user, setUser }) {
     setFilteredCars(filtered);
   };
 
-  // =================================
-  // CRUD MOBIL
-  // =================================
   const handleCreateCar = async (data) => {
     await createCar(data);
     await fetchCars();
@@ -223,9 +217,6 @@ function AdminDashboard({ user, setUser }) {
     </div>
   );
 
-  // =================================
-  // RENDER
-  // =================================
   return (
     <div className="min-h-screen bg-[#f5f7fa]">
       <Navbar

@@ -1,58 +1,58 @@
 /* eslint-disable no-unused-vars */
-import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { register } from '../services/api'
-import { Car } from 'lucide-react'
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { register } from "../services/api";
+import { Car } from "lucide-react";
 
 function Register() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    fullname: '',
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    address: '',
-    phone_number: '',
-    age: ''
-  })
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+    fullname: "",
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    address: "",
+    phone_number: "",
+    age: "",
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
+    e.preventDefault();
+    setError("");
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Password tidak cocok')
-      return
+      setError("Password tidak cocok");
+      return;
     }
 
     if (formData.password.length < 6) {
-      setError('Password minimal 6 karakter')
-      return
+      setError("Password minimal 6 karakter");
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
     try {
-      const { confirmPassword, ...dataToSend } = formData
-      await register(dataToSend)
-      alert('Registrasi berhasil! Silakan login.')
-      navigate('/login')
+      const { confirmPassword, ...dataToSend } = formData;
+      await register(dataToSend);
+      alert("Registrasi berhasil! Silakan login.");
+      navigate("/login");
     } catch (err) {
-      setError(err.response?.data?.message || 'Registrasi gagal')
+      setError(err.response?.data?.message || "Registrasi gagal");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8">
@@ -63,24 +63,26 @@ function Register() {
             Car<span className="text-blue-600">Market</span>
           </h1>
         </div>
-        
+
         <h2 className="text-2xl font-bold mb-2 text-center text-gray-900">
           Buat Akun Baru
         </h2>
         <p className="text-sm text-gray-600 text-center mb-8">
           Bergabung dan temukan mobil impian Anda
         </p>
-        
+
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 text-sm">
             {error}
           </div>
         )}
-        
+
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div className="grid grid-cols-2 gap-5">
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-700">Nama Lengkap</label>
+              <label className="text-sm font-semibold text-gray-700">
+                Nama Lengkap
+              </label>
               <input
                 type="text"
                 name="fullname"
@@ -93,7 +95,9 @@ function Register() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-700">Username</label>
+              <label className="text-sm font-semibold text-gray-700">
+                Username
+              </label>
               <input
                 type="text"
                 name="username"
@@ -121,7 +125,9 @@ function Register() {
 
           <div className="grid grid-cols-2 gap-5">
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-700">Password</label>
+              <label className="text-sm font-semibold text-gray-700">
+                Password
+              </label>
               <input
                 type="password"
                 name="password"
@@ -134,7 +140,9 @@ function Register() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-700">Konfirmasi Password</label>
+              <label className="text-sm font-semibold text-gray-700">
+                Konfirmasi Password
+              </label>
               <input
                 type="password"
                 name="confirmPassword"
@@ -148,7 +156,9 @@ function Register() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-semibold text-gray-700">Alamat</label>
+            <label className="text-sm font-semibold text-gray-700">
+              Alamat
+            </label>
             <input
               type="text"
               name="address"
@@ -162,7 +172,9 @@ function Register() {
 
           <div className="grid grid-cols-2 gap-5">
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-700">No. Telepon</label>
+              <label className="text-sm font-semibold text-gray-700">
+                No. Telepon
+              </label>
               <input
                 type="tel"
                 name="phone_number"
@@ -175,7 +187,9 @@ function Register() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-700">Umur</label>
+              <label className="text-sm font-semibold text-gray-700">
+                Umur
+              </label>
               <input
                 type="number"
                 name="age"
@@ -189,24 +203,27 @@ function Register() {
             </div>
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="bg-blue-600 hover:bg-blue-700 text-white py-3.5 rounded-lg text-base font-semibold mt-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={loading}
           >
-            {loading ? 'Memuat...' : 'Daftar Sekarang'}
+            {loading ? "Memuat..." : "Daftar Sekarang"}
           </button>
         </form>
 
         <p className="text-center mt-6 text-sm text-gray-600">
-          Sudah punya akun? {' '}
-          <Link to="/login" className="text-blue-600 font-semibold hover:underline">
+          Sudah punya akun?{" "}
+          <Link
+            to="/login"
+            className="text-blue-600 font-semibold hover:underline"
+          >
             Masuk
           </Link>
         </p>
       </div>
     </div>
-  )
+  );
 }
 
-export default Register
+export default Register;

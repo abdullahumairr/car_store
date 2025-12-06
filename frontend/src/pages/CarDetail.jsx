@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getCarById, normalizeCarImages } from "../services/api"; // <-- IMPORT
+import { getCarById, normalizeCarImages, deleteCar } from "../services/api"; // <-- IMPORT
 import {
   ChevronLeft,
   ChevronRight,
@@ -27,17 +27,14 @@ function CarDetail({ user, setUser }) {
   const fetchCarDetail = async () => {
     try {
       const response = await getCarById(id);
-      setCar(response.data);
 
-      // GUNAKAN FUNCTION normalizeCarImages DI SINI
-      const parsedImages = normalizeCarImages(response.data);
-      setImages(parsedImages || []);
+      // FIX
+      const carData = response.data.data;
 
-      console.log("CarDetail debug:", {
-        carId: response.data.id,
-        rawImageUrl: response.data.image_url,
-        parsedImages: parsedImages,
-      });
+      setCar(carData);
+
+      const parsedImages = normalizeCarImages(carData);
+      setImages(parsedImages);
     } catch (error) {
       console.error("Error fetching car detail:", error);
       alert("Mobil tidak ditemukan");
@@ -55,8 +52,22 @@ function CarDetail({ user, setUser }) {
     setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
-  const handleBooking = () => {
-    alert("Fitur booking akan segera hadir!");
+  const handleBooking = async () => {
+    if (
+      !confirm(
+        "Yakin ingin booking mobil ini?"
+      )
+    )
+      return;
+
+    try {
+      await deleteCar(id);
+      alert("Selamat mobil berhasil di Booking!");
+      navigate("/");
+    } catch (error) {
+      console.error("Booking failed:", error);
+      alert("Gagal booking mobil.");
+    }
   };
 
   const handleWhatsApp = () => {
@@ -166,14 +177,9 @@ function CarDetail({ user, setUser }) {
                 {car.brand} ({car.year})
               </p>
 
-              <div className="flex gap-6 mb-6">
-                <div className="flex items-center gap-2 text-sm text-[#666]">
-                  <Gauge size={18} color="#666" />
-                  <span>{parseInt(car.mileage).toLocaleString()} KM</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-[#666]">
-                  <span>AUTOMATIC</span>
-                </div>
+              <div className="flex items-center gap-2 text-sm text-[#666]">
+                <Gauge size={18} color="#666" />
+                <span>{parseInt(car.mileage).toLocaleString()} KM</span>
               </div>
 
               <div className="h-px bg-[#e5e5e5] my-6" />
@@ -187,7 +193,9 @@ function CarDetail({ user, setUser }) {
                   <User size={20} color="#666" />
                   <div>
                     <p className="text-[13px] text-[#999] mb-1">Penjual</p>
-                    <p className="text-sm text-[#333] font-medium">--</p>
+                    <p className="text-sm text-[#333] font-medium">
+                      Toyota Dealer
+                    </p>
                   </div>
                 </div>
 
@@ -232,30 +240,17 @@ function CarDetail({ user, setUser }) {
                   Beli barang ini pakai
                 </h4>
                 <div className="bg-white p-3 rounded-md mb-2 text-[13px] text-[#333] leading-relaxed">
-                  <span>
-                    📱 Booking mobil, motor, atau handphone yang kamu mau.
-                  </span>
+                  <span>📱 Booking mobil yang kamu mau.</span>
                 </div>
                 <div className="bg-white p-3 rounded-md mb-2 text-[13px] text-[#333] leading-relaxed">
                   <span>
-                    ✅ Hindari penipuan. Uangmu tersimpan aman di OLX dan
+                    ✅ Hindari penipuan. Uangmu tersimpan aman di CarMarket dan
                     terkirim setelah deal dengan Penjual.
                   </span>
                 </div>
                 <div className="bg-white p-3 rounded-md text-[13px] text-[#333] leading-relaxed">
                   <span>
-                    💯 Jaminan uang kembali 100%* jika tidak cocok atau COD.
-                  </span>
-                </div>
-              </div>
-
-              <div className="mb-4">
-                <div className="flex items-center gap-3 p-3 bg-[#f5f5f5] rounded-lg">
-                  <div className="w-10 h-10 rounded-full bg-[#ff0000] text-white flex items-center justify-center text-lg font-semibold">
-                    D
-                  </div>
-                  <span className="text-sm font-semibold text-[#333]">
-                    DEDE - FOCUS MOTOR
+                    💯 Jaminan uang kembali 100%* jika bekas tabrak atau banjir.
                   </span>
                 </div>
               </div>

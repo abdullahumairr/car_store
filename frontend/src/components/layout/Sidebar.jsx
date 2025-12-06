@@ -1,69 +1,71 @@
-import { useState } from 'react'
+import { useState } from "react";
 
 function Sidebar({ filters, onFilterChange }) {
-  const [priceRange, setPriceRange] = useState(filters.priceRange || [0, 1000000000])
-  const [mileageRange, setMileageRange] = useState(filters.mileageRange || [0, 500000])
+  const [priceRange, setPriceRange] = useState(
+    filters.priceRange || [0, 1000000000]
+  );
+  const [mileageRange, setMileageRange] = useState(
+    filters.mileageRange || [0, 500000]
+  );
 
   const brands = [
-    'Toyota',
-    'Honda',
-    'Suzuki',
-    'Daihatsu',
-    'Mitsubishi',
-    'Nissan',
-    'Mazda',
-    'BMW',
-    'Mercedes-Benz',
-    'Hyundai'
-  ]
+    "Toyota",
+    "Honda",
+    "Suzuki",
+    "Daihatsu",
+    "Mitsubishi",
+    "Nissan",
+    "Mazda",
+    "BMW",
+    "Mercedes-Benz",
+    "Hyundai",
+  ];
 
   const handlePriceChange = (index, value) => {
-    const newRange = [...priceRange]
-    newRange[index] = parseInt(value)
-    setPriceRange(newRange)
-    onFilterChange({ ...filters, priceRange: newRange })
-  }
+    const newRange = [...priceRange];
+    newRange[index] = parseInt(value);
+    setPriceRange(newRange);
+    onFilterChange({ ...filters, priceRange: newRange });
+  };
 
   const handleMileageChange = (index, value) => {
-    const newRange = [...mileageRange]
-    newRange[index] = parseInt(value)
-    setMileageRange(newRange)
-    onFilterChange({ ...filters, mileageRange: newRange })
-  }
-
+    const newRange = [...mileageRange];
+    newRange[index] = parseInt(value);
+    setMileageRange(newRange);
+    onFilterChange({ ...filters, mileageRange: newRange });
+  };
 
   const handleBrandChange = (brand) => {
-    const currentBrands = filters.brands || []
+    const currentBrands = filters.brands || [];
     const newBrands = currentBrands.includes(brand)
-      ? currentBrands.filter(b => b !== brand)
-      : [...currentBrands, brand]
-    onFilterChange({ ...filters, brands: newBrands })
-  }
+      ? currentBrands.filter((b) => b !== brand)
+      : [...currentBrands, brand];
+    onFilterChange({ ...filters, brands: newBrands });
+  };
 
   const handleReset = () => {
-    setPriceRange([0, 1000000000])
-    setMileageRange([0, 500000])
+    setPriceRange([0, 1000000000]);
+    setMileageRange([0, 500000]);
     onFilterChange({
       locations: [],
       brands: [],
       priceRange: [0, 1000000000],
-      mileageRange: [0, 500000]
-    })
-  }
+      mileageRange: [0, 500000],
+    });
+  };
 
   return (
-    <aside className="w-72 bg-white border-r border-gray-200 p-6 h-[calc(100vh-64px)] overflow-y-auto sticky top-16">
+    <aside className="w-fit bg-white border-r border-gray-200 p-6 h-[calc(100vh-64px)] overflow-y-auto sticky top-16">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-semibold text-gray-800">Filter</h3>
-        <button 
+        <button
           onClick={handleReset}
           className="text-sm text-blue-600 hover:text-blue-700 font-medium px-3 py-1.5 rounded hover:bg-blue-50 transition-colors"
         >
           Reset
         </button>
       </div>
-
 
       {/* Harga */}
       <div className="mb-8 pb-6 border-b border-gray-200">
@@ -93,7 +95,9 @@ function Sidebar({ filters, onFilterChange }) {
 
       {/* Kilometer */}
       <div className="mb-8 pb-6 border-b border-gray-200">
-        <h4 className="text-base font-semibold text-gray-800 mb-4">Kilometer</h4>
+        <h4 className="text-base font-semibold text-gray-800 mb-4">
+          Kilometer
+        </h4>
         <div className="flex items-center gap-2 mb-2">
           <input
             type="number"
@@ -121,8 +125,11 @@ function Sidebar({ filters, onFilterChange }) {
       <div className="mb-8">
         <h4 className="text-base font-semibold text-gray-800 mb-4">Brand</h4>
         <div className="flex flex-col gap-3">
-          {brands.map(brand => (
-            <label key={brand} className="flex items-center gap-2 cursor-pointer group">
+          {brands.map((brand) => (
+            <label
+              key={brand}
+              className="flex items-center gap-2 cursor-pointer group"
+            >
               <input
                 type="checkbox"
                 checked={(filters.brands || []).includes(brand)}
@@ -137,7 +144,7 @@ function Sidebar({ filters, onFilterChange }) {
         </div>
       </div>
     </aside>
-  )
+  );
 }
 
-export default Sidebar
+export default Sidebar;

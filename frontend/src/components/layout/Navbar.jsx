@@ -1,15 +1,15 @@
-import { Search, Plus, LogOut, User } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { Search, Plus, LogOut, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function Navbar({ user, searchQuery, onSearchChange, onCreateClick, setUser }) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    setUser(null)
-    navigate('/login')
-  }
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+    navigate("/login");
+  };
 
   return (
     <nav className="bg-white border-b border-gray-200 py-3 sticky top-0 z-50">
@@ -38,8 +38,8 @@ function Navbar({ user, searchQuery, onSearchChange, onCreateClick, setUser }) {
         {/* Right Actions */}
         <div className="flex items-center gap-3">
           {/* Tombol Jual (hanya untuk seller & admin) */}
-          {(user?.role === 'seller' || user?.role === 'admin') && (
-            <button 
+          {(user?.role === "seller" || user?.role === "admin") && (
+            <button
               onClick={onCreateClick}
               className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors"
             >
@@ -57,7 +57,7 @@ function Navbar({ user, searchQuery, onSearchChange, onCreateClick, setUser }) {
           </div>
 
           {/* Logout Button */}
-          <button 
+          <button
             onClick={handleLogout}
             className="p-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg flex items-center justify-center transition-colors"
             title="Logout"
@@ -67,7 +67,7 @@ function Navbar({ user, searchQuery, onSearchChange, onCreateClick, setUser }) {
         </div>
       </div>
     </nav>
-  )
+  );
 }
 
-export default Navbar
+export default Navbar;

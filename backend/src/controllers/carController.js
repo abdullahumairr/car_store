@@ -29,10 +29,12 @@ export const getCarByIdHandler = async (req, res, next) => {
 
 export const createCarHandler = async (req, res, next) => {
   try {
-    const response = await carService.createCarHandler(
-      req.body,
-      req.user
-    );
+    // Convert array → JSON string
+    if (Array.isArray(req.body.image_url)) {
+      req.body.image_url = JSON.stringify(req.body.image_url);
+    }
+
+    const response = await carService.createCarHandler(req.body, req.user);
 
     res.status(201).json({
       status: "success",
@@ -46,10 +48,13 @@ export const createCarHandler = async (req, res, next) => {
 
 export const updateCarHandler = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    // Convert array → JSON string
+    if (Array.isArray(req.body.image_url)) {
+      req.body.image_url = JSON.stringify(req.body.image_url);
+    }
 
     const response = await carService.updateCarHandler(
-      id,
+      req.params.id,
       req.body,
       req.user
     );
@@ -67,11 +72,11 @@ export const updateCarHandler = async (req, res, next) => {
 export const deleteCarHandler = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const response = await carService.deleteCarHandler(id, req.body);
+    const response = await carService.deleteCarHandler(id, req.user);
 
-    res.status(201).json({
+    res.status(200).json({
       status: "success",
-      message: "Car delete successfully",
+      message: "Car deleted successfully",
       data: response,
     });
   } catch (error) {

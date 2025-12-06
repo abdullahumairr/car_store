@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import AdminDashboard from "./pages/dashboard/admin/AdminDashboard.jsx";
-import SellerDashboard from "./pages/dashboard/seller/SellerDashboard.jsx";
 import UserDashboard from "./pages/dashboard/user/UserDashboard.jsx";
 import CarDetail from "./pages/CarDetail.jsx";
+import SellerDashboard from "./pages/dashboard/seller/SellerDashboard.jsx";
 
 const ProtectedRoute = ({ children, user }) => {
   const token = localStorage.getItem("token");
