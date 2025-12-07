@@ -41,13 +41,20 @@ function SellerDashboard({ user, setUser }) {
       const carsData = Array.isArray(response.data)
         ? response.data
         : response.data?.data ?? response.data?.cars ?? [];
-      setCars(carsData);
+
+      setCars(
+        carsData.map((c) => ({
+          ...c,
+          images: normalizeCarImages(c.image_url),
+        }))
+      );
     } catch (error) {
       console.error("Error fetching cars:", error);
     } finally {
       setLoading(false);
     }
   };
+
   const applyFilters = () => {
     let filtered = [...cars];
 
@@ -130,9 +137,7 @@ function SellerDashboard({ user, setUser }) {
   };
 
   const MyCarCard = ({ car }) => {
-    const images = normalizeCarImages(car.image_url);
-    const firstImage = images.length > 0 ? images[0] : null;
-
+    const firstImage = car.images?.[0] ? getImageUrl(car.images[0]) : null;
     return (
       <div className="bg-white rounded-xl p-4 flex gap-4 shadow-sm hover:shadow-md transition-shadow">
         <div className="w-48 h-36 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">

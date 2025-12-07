@@ -33,7 +33,6 @@ function CarForm({ onSubmit, onClose, initialData = null }) {
       
       const images = normalizeCarImages(initialData);
 
-      // kalau kosong → minimal 1 input field
       setImageLinks(images.length ? images : [""]);
     }
   }, [initialData]);

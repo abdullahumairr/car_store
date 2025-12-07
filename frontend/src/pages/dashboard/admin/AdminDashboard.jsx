@@ -152,9 +152,6 @@ function AdminDashboard({ user, setUser }) {
     await fetchCars();
   };
 
-  // =================================
-  // CRUD USER
-  // =================================
   const handleCreateUser = async (data) => {
     await createUser(data);
     await fetchUsers();
@@ -174,9 +171,6 @@ function AdminDashboard({ user, setUser }) {
     await fetchUsers();
   };
 
-  // =================================
-  // UI COMPONENTS
-  // =================================
   const UserCard = ({ u }) => (
     <div className="bg-white rounded-xl p-5 shadow flex items-center justify-between">
       <div className="flex items-center gap-4">
@@ -270,7 +264,7 @@ function AdminDashboard({ user, setUser }) {
             </button>
           </div>
 
-          {/* USERS LIST */}
+          {/* user list */}
           {view === "users" ? (
             <div className="flex flex-col gap-4">
               <button
@@ -311,7 +305,6 @@ function AdminDashboard({ user, setUser }) {
                         key={c.id}
                         className="bg-white rounded-xl p-4 shadow flex gap-5"
                       >
-                        {/* card admin */}
                         <img
                           src={getImageUrl(c.images?.[0])}
                           className="w-40 h-32 rounded object-cover"
@@ -350,7 +343,6 @@ function AdminDashboard({ user, setUser }) {
         </main>
       </div>
 
-      {/* MODALS */}
       {showCarForm && (
         <CarForm
           initialData={editingCar}

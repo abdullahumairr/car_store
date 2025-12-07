@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getCarById, normalizeCarImages, deleteCar } from "../services/api"; // <-- IMPORT
+import {
+  getCarById,
+  normalizeCarImages,
+  deleteCar,
+  getUserById,
+} from "../services/api"; // <-- IMPORT
 import {
   ChevronLeft,
   ChevronRight,
@@ -16,6 +21,7 @@ function CarDetail({ user, setUser }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const [car, setCar] = useState(null);
+  const [seller, setSeller] = useState(null); // <— TARUH DI SINI
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [images, setImages] = useState([]);
@@ -27,11 +33,16 @@ function CarDetail({ user, setUser }) {
   const fetchCarDetail = async () => {
     try {
       const response = await getCarById(id);
-
-      // FIX
       const carData = response.data.data;
 
       setCar(carData);
+
+      try {
+        const userRes = await getUserById(carData.user_id);
+        setSeller(userRes.data.data || userRes.data.user || userRes.data);
+      } catch (e) {
+        console.error("Gagal load penjual:", e);
+      }
 
       const parsedImages = normalizeCarImages(carData);
       setImages(parsedImages);
@@ -53,12 +64,7 @@ function CarDetail({ user, setUser }) {
   };
 
   const handleBooking = async () => {
-    if (
-      !confirm(
-        "Yakin ingin booking mobil ini?"
-      )
-    )
-      return;
+    if (!confirm("Yakin ingin booking mobil ini?")) return;
 
     try {
       await deleteCar(id);
@@ -117,7 +123,7 @@ function CarDetail({ user, setUser }) {
 
         <div className="grid grid-cols-[1fr_400px] gap-6">
           <div className="flex flex-col gap-6">
-            {/* Image Gallery */}
+            {/* image car */}
             <div className="relative w-full h-[500px] bg-black rounded-xl overflow-hidden">
               {images.length > 0 ? (
                 <>
@@ -194,7 +200,7 @@ function CarDetail({ user, setUser }) {
                   <div>
                     <p className="text-[13px] text-[#999] mb-1">Penjual</p>
                     <p className="text-sm text-[#333] font-medium">
-                      Toyota Dealer
+                      {seller?.fullname || seller?.username || "Penjual"}
                     </p>
                   </div>
                 </div>

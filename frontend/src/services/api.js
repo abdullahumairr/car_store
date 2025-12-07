@@ -23,22 +23,28 @@ export function normalizeCarImages(car) {
     return raw.filter(Boolean);
   }
 
-  // kalau json string
   try {
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
   } catch {
-    // kalau cuma string biasa
     return raw ? [raw] : [];
   }
 }
 
-// Fungsi lama getImageUrl tetap ada
 export const getImageUrl = (path) => {
   if (!path) return null;
   if (path.startsWith("http")) return path;
   return `http://localhost:7777/${path}`;
 };
+
+export async function getSellerNameByCarId(carId) {
+  const res = await getAllCars();
+  const allCars = res.data.data || res.data || [];
+
+  const found = allCars.find((c) => c.id == carId);
+
+  return found?.seller_name || found?.username || found?.name || null;
+}
 
 // AUTH
 export const register = (data) => api.post("/auth/register", data);
@@ -51,8 +57,9 @@ export const deleteCar = (id) => api.delete(`/cars/${id}`);
 export const updateCar = (id, data) => api.put(`/cars/${id}`, data);
 export const createCar = (data) => api.post(`/cars`, data);
 
-// USERS (ADMIN)
+// USERS
 export const getAllUsers = () => api.get("/users");
+export const getUserById = (id) => api.get(`/users/${id}`);
 export const createUser = (data) => api.post("/users", data);
 export const updateUser = (id, data) => api.put(`/users/${id}`, data);
 export const deleteUser = (id) => api.delete(`/users/${id}`);
