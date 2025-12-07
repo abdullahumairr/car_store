@@ -3,15 +3,19 @@
 Full-Stack Web App (Node.js + Express + MySQL + React + TailwindCSS)
 
 CarMarket adalah aplikasi web untuk menjual dan membeli mobil bekas.
+
 Terdiri dari 3 role:
 
 👤 User – Jelajah mobil & booking mobil
+
 🏪 Seller – Upload mobil, kelola mobil saya
+
 🛠️ Admin – Kelola semua mobil & semua user
 
 🚀 Tech Stack
 
 🧩 Backend
+
     Node.js
     Express.js
     MySQL + mysql2
@@ -21,6 +25,7 @@ Terdiri dari 3 role:
     bcrypt
 
 🎨 Frontend
+
     React + Vite
     TailwindCSS
     Axios
@@ -30,32 +35,37 @@ Terdiri dari 3 role:
 📦 Features
 
 🔐 Authentication
-Register (user, seller)
-Login (JWT)
-Protected routes
-Auto authorization:
-    Admin: kelola semua data
-    Seller: kelola mobil sendiri
-    User: booking mobil
+
+    Register (user, seller)
+    Login (JWT)
+    Protected routes
+    Auto authorization:
+        Admin: kelola semua data
+        Seller: kelola mobil sendiri
+        User: booking mobil
 
 🚗 Cars Module
- Admin
+Admin
+
     Lihat semua mobil
     Edit mobil
     Delete mobil
 
  Seller
-    Upload mobil max 10 foto
+
+    Upload mobil 
     Edit mobil
     Delete mobil
     Lihat "Mobil Saya"
 
  User
+
     Jelajah semua mobil
     Detail mobil (galeri foto, deskripsi, harga)
     Booking mobil (hapus dari database)
 
 👤 Users Module (Admin)
+
     Lihat semua user
     Tambah user
     Edit user
@@ -63,9 +73,11 @@ Auto authorization:
 
 🛠️ Backend Setup
 1️⃣ Install dependencies
+
     npm install
 
 2️⃣ Setup .env
+
     PORT=7777
     DB_HOST=localhost
     DB_USER=root
@@ -74,12 +86,15 @@ Auto authorization:
     JWT_SECRET=yourjwtsecret
 
 3️⃣ Jalankan server
+
     npm run dev
 
 Backend berjalan di:
+
 http://localhost:7777
 
 📁 Backend Folder Structure
+
     backend/
     │── config/
     │   └── db.js
@@ -91,16 +106,21 @@ http://localhost:7777
     │── server.js
 
 🎨 Frontend Setup
+
 1️⃣ Install dependencies
+
     npm install
 
 2️⃣ Jalankan frontend
+
     npm run dev
 
 Frontend berjalan di:
+
 http://localhost:5173
 
 📁 Frontend Structure
+
     frontend/
     │── src/
       ├── components/
@@ -112,6 +132,7 @@ http://localhost:5173
   
 
 🔗 API Endpoints
+
     Auth
     | Method | Endpoint       | Description            |
     | ------ | -------------- | ---------------------- |
@@ -137,22 +158,28 @@ http://localhost:5173
 
 
 🧪 How to Test
+
+
 👤 Login sebagai User:
+
     Jelajah mobil
     Booking mobil
 
 🏪 Login sebagai Seller:
+
     Upload mobil
     Edit mobil
     Hapus mobil
     Lihat mobil saya
 
 🛠️ Login sebagai Admin:
+
     Lihat semua mobil
     Hapus/Edit mobil
     Kelola user
 
 📝 Environment Requirements
+
     Node v18+
     MySQL v8+
     NPM v9+
