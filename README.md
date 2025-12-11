@@ -77,12 +77,12 @@ To run the project locally, follow the steps below.
 ### Importing the Database
 
 A SQL dump file is included in the project for quick setup. _yea ik i shouldve used prisma, but this is for assignment's purposes_  
-Make sure you already created a MariaDB/MySQL database. I'll assume you're using `mariadb`, change if necessary
+Make sure you already created a MariaDB/MySQL database. I'll assume you're using `Mysql`, change if necessary
 
 1. Login to MariaDB
 
    ```sh
-   mariadb -u root 
+   mysql -u root -p
    ```
 
 2. Create the database (if not already created)
@@ -93,7 +93,7 @@ Make sure you already created a MariaDB/MySQL database. I'll assume you're using
 
 3. Exit MariaDB and import the dump
    ```sh< ./car_store.sql
-   mariadb -u root car_store 
+   mysql -u root -p car_store 
    ```
 
 After importing, the database will contain all required tables.
