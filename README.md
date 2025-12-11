@@ -1,58 +1,143 @@
-Getting Started
-This is an example of how you may give instructions on setting up your project locally. To get a local copy up and running follow these simple example steps.
+CarMarket — Used Car Marketplace
 
-Prerequisites
-This is an example of how to list things you need to use the software and how to install them.
+CarMarket is a full-stack web application for buying and selling used cars.
+The platform includes multiple user roles, secure authentication, car listing management, and a modern responsive UI.
 
-npm
-npm install npm@latest -g
+Overview
+
+CarMarket allows users to browse available cars, view details, and book a vehicle.
+Sellers can manage their own listings, and admins can control the entire system.
+
+This project consists of:
+
+Frontend: React, Vite, TailwindCSS
+
+Backend: Node.js, Express, MySQL, JWT
+
+Image Handling: URL-based (no multer / no file upload)
+
+Features
+🔹 User
+
+Browse all cars
+
+View car details
+
+Book a car (car will be removed from database)
+
+🔹 Seller
+
+Add new car listings
+
+Update own listings
+
+Delete own listings
+
+Store up to 10 image URLs
+
+🔹 Admin
+
+Full CRUD on all cars
+
+Manage all users
+
+Access to admin dashboard
+
+Tech Stack
+Frontend
+
+React + Vite
+
+TailwindCSS
+
+Axios
+
+React Router
+
+Lucide Icons
+
+Backend
+
+Express JS
+
+MySQL (mysql2)
+
+JWT Auth
+
+Bcrypt
+
+Express Middleware
+
 Installation
-Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services.
 
-Get a free API Key at https://example.com
-Clone the repo
-git clone https://github.com/github_username/repo_name.git
-Install NPM packages
+CarMarket is separated into backend & frontend folders. Install both.
+
+Backend Setup
+1. Navigate to backend folder
+cd backend
+
+2. Install dependencies
 npm install
-Enter your API in config.js
-const API_KEY = 'ENTER YOUR API';
-Change git remote url to avoid accidental pushes to base project
-git remote set-url origin github_username/repo_name
-git remote -v # confirm the changes
-(back to top)
 
-Usage
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+3. Setup MySQL database
+CREATE DATABASE carmarket;
 
-For more examples, please refer to the Documentation
+4. Configure database connection
 
-(back to top)
+Edit the config file:
 
-Roadmap
- Add Changelog
- Add back to top links
- Add Additional Templates w/ Examples
- Add "components" document to easily copy & paste sections of the readme
- Multi-language Support
- Chinese
- Spanish
-See the open issues for a full list of proposed features (and known issues).
+/src/config/db.js
 
-(back to top)
+5. Run backend server
+npm run dev
 
-Contributing
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
 
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement". Don't forget to give the project a star! Thanks again!
+The backend runs at:
 
-Fork the Project
-Create your Feature Branch (git checkout -b feature/AmazingFeature)
-Commit your Changes (git commit -m 'Add some AmazingFeature')
-Push to the Branch (git push origin feature/AmazingFeature)
-Open a Pull Request
-Top contributors:
-contrib.rocks image
-(back to top)
+http://localhost:7777
 
-License
-Distributed under the Unlicense License. See LICENSE.txt for more information.
+Frontend Setup
+1. Navigate to frontend
+cd frontend
+
+2. Install dependencies
+npm install
+
+3. Start development server
+npm run dev
+
+
+Frontend runs at:
+
+http://localhost:5173
+
+Project Structure
+Backend
+backend/
+ ├── controllers/
+ ├── services/
+ ├── routes/
+ ├── middleware/
+ ├── config/
+ ├── server.js
+
+Frontend
+frontend/
+ ├── components/
+ ├── pages/
+ ├── services/api.js
+ ├── App.jsx
+ ├── main.jsx
+
+API Overview
+Auth Routes
+Method	Endpoint	Description
+POST	/auth/register	Register account
+POST	/auth/login	Login & get JWT
+Car Routes
+Method	Endpoint	Description
+GET	/cars	Get all cars
+GET	/cars/:id	Get car by ID
+POST	/cars	Create car (seller/admin)
+PUT	/cars/:id	Update car
+DELETE	/cars/:id	Delete car (any role allowed for booking)
