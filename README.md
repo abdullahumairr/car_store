@@ -109,26 +109,29 @@ After importing, the database will contain all required tables.
 2. Register an account and log into it
 
 3. You can now use it for:
-   - Create recipes
-   - Upload recipe images
-   - Edit and delete recipes
-   - View your recipe collection
+   - INput your car
+   - Upload car images
+   - Edit and delete car
+   - View your car collection
   
 ## API Overview
 
 ### Auth Routes
   
-| Method  | Endpoint || Description |
-| -------- | ------- || ------- |
-| POST  | /auth/register   || Register account    |
-| POST | /auth/login     || Login & get JWT    |
+| Method   | Endpoint       | Description      |
+| -------- | ---------------| -----------------|
+| POST     | /auth/register | Register account |
+| POST     | /auth/login    | Login & get JWT  |
 
 ### Car Routes
   
-| Method  | Endpoint || Description |
-| -------- | ------- || ------- |
-| POST  | /auth/register   || Register account    |
-| POST | /cars/:id || Login & get JWT    |
+| Method   | Endpoint       | Description      |
+| -------- | -------------- | -------------------------- |
+| GET      | /cars          | Get all cars               |
+| GET      | /cars/:id      | Get car by ID              |
+| POST     | /cars          | Create car (seller/admin)  |
+| PUT      | /cars/:id      | Update car                 |
+| DELETE   | /cars/:id      | Delete car                 |
 
 
 ## License
