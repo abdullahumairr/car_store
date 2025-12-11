@@ -67,11 +67,10 @@ export const deleteCarHandler = async (id, user) => {
   const [car] = await pool.query("SELECT * FROM cars WHERE id = ?", [id]);
   if (car.length === 0) throw new Error("Car not found");
 
-  if (car[0].user_id !== user.id && user.role !== "admin") {
-    throw new Error("Access denied");
-  }
-
   await pool.query("DELETE FROM cars WHERE id = ?", [id]);
 
   return { message: "Car deleted" };
 };
+
+
+
