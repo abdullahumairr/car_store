@@ -1,144 +1,140 @@
 CarMarket — Used Car Marketplace
 
-CarMarket is a full-stack application for buying and selling used cars.
-It includes user roles, car listings, booking system, and an admin dashboard — all built with a modern JavaScript stack.
+CarMarket is a full-stack web application for browsing, selling, and booking used cars.
+It includes role-based access (User, Seller, Admin), a car management system, and a clean modern UI.
 
-Overview
+Tech Stack
+Frontend
 
-CarMarket helps users browse available cars, view detailed information, and book vehicles.
-Sellers can manage their own listings, while admins have full access to all data.
+React + Vite
 
-The app consists of:
+TailwindCSS
 
-Frontend: React, Vite, TailwindCSS
-Backend: Node.js, Express, MySQL, JWT
+Axios
 
-Image Handling: URL-based (no multer)
+Lucide Icons
+
+Backend
+
+Node.js + Express
+
+MySQL
+
+JWT Authentication
 
 Features
 🔹 User
-Browse all available cars
+
+Browse all cars
+
 View car details
-Book a car (car is removed from database)
+
+Book a car (car will be removed from database)
 
 🔹 Seller
-Add new cars
-Edit own cars
-Delete own cars
 
-Manage image URLs (up to 10 images)
+Add new car listings
+
+Edit & delete own listings
+
+Upload up to 10 image URLs
+
 🔹 Admin
+
 Full CRUD on all cars
+
 Manage users
-Access all dashboards
 
-Installation
+Access dashboards for all roles
 
-CarMarket is designed for easy setup — you can install backend and frontend separately.
+Project Structure
+CarMarket/
+│
+├── backend/
+│   ├── controllers/
+│   ├── routes/
+│   ├── services/
+│   ├── middleware/
+│   ├── config/
+│   ├── server.js
+│
+└── frontend/
+    ├── components/
+    ├── pages/
+    ├── services/api.js
+    ├── App.jsx
+    ├── main.jsx
 
-Backend Setup
-Navigate to backend:
-
+Installation Guide
+1. Backend Setup
 cd backend
-
-
-Install dependencies:
-
 npm install
 
-Create MySQL database:
+
+Create database:
+
 CREATE DATABASE carmarket;
 
-Configure database connection in:
-/src/config/db.js
 
-Start the backend:
+Configure database in:
+
+backend/src/config/db.js
+
+
+Start server:
 
 npm run dev
 
-Backend runs on:
+
+Backend runs at:
 
 http://localhost:7777
 
-Frontend Setup
-
-Navigate to frontend:
-
+2. Frontend Setup
 cd frontend
-
-
-Install packages:
-
 npm install
-
-
-Run the frontend:
-
 npm run dev
 
 
-Frontend runs on:
+Frontend runs at:
 
 http://localhost:5173
 
-Documentation
+Usage
+Login & Roles
 
-Full documentation includes:
+User: browse and book cars
 
-Project structure
+Seller: manage own listings
 
-Authentication flow
+Admin: full access
 
-CRUD car management
+Booking a Car
 
-Booking logic
+Clicking Booking in Car Detail will:
 
-Role permissions
+Delete the car from DB
 
-How to run backend & frontend
+Redirect user to homepage
 
-How image URLs are processed
+API Overview
+User Authentication
+POST /auth/register
+POST /auth/login
 
-Seller Dashboard & Admin Dashboard
+Cars
+GET    /cars
+GET    /cars/:id
+POST   /cars
+PUT    /cars/:id
+DELETE /cars/:id
 
-Project Structure
-Backend
-backend/
- ├── controllers/
- ├── services/
- ├── routes/
- ├── middleware/
- ├── config/
- ├── server.js
-
-Frontend
-frontend/
- ├── components/
- ├── pages/
- ├── services/api.js
- ├── App.jsx
- ├── main.jsx
-
-
-Contributing
-
-The main purpose of this repository is to practice full-stack development using React and Express.
-You can contribute by improving code structure, adding validation, fixing bugs, or enhancing UI.
-
-Good First Issues
-
-If you want to expand the project, here are suggestions:
-
-Add chat between seller & user
-
-Add payment integration
-
-Add image preview before upload
-
-Add pagination & advanced filters
-
-Convert project to TypeScript
+Users (Admin)
+GET    /users
+GET    /users/:id
+PUT    /users/:id
+DELETE /users/:id
 
 License
 
-This project is MIT licensed.
+This project is under the MIT License.
