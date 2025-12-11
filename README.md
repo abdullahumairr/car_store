@@ -1,140 +1,58 @@
-CarMarket — Used Car Marketplace
+Getting Started
+This is an example of how you may give instructions on setting up your project locally. To get a local copy up and running follow these simple example steps.
 
-CarMarket is a full-stack web application for browsing, selling, and booking used cars.
-It includes role-based access (User, Seller, Admin), a car management system, and a clean modern UI.
+Prerequisites
+This is an example of how to list things you need to use the software and how to install them.
 
-Tech Stack
-Frontend
+npm
+npm install npm@latest -g
+Installation
+Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services.
 
-React + Vite
-
-TailwindCSS
-
-Axios
-
-Lucide Icons
-
-Backend
-
-Node.js + Express
-
-MySQL
-
-JWT Authentication
-
-Features
-🔹 User
-
-Browse all cars
-
-View car details
-
-Book a car (car will be removed from database)
-
-🔹 Seller
-
-Add new car listings
-
-Edit & delete own listings
-
-Upload up to 10 image URLs
-
-🔹 Admin
-
-Full CRUD on all cars
-
-Manage users
-
-Access dashboards for all roles
-
-Project Structure
-CarMarket/
-│
-├── backend/
-│   ├── controllers/
-│   ├── routes/
-│   ├── services/
-│   ├── middleware/
-│   ├── config/
-│   ├── server.js
-│
-└── frontend/
-    ├── components/
-    ├── pages/
-    ├── services/api.js
-    ├── App.jsx
-    ├── main.jsx
-
-Installation Guide
-1. Backend Setup
-cd backend
+Get a free API Key at https://example.com
+Clone the repo
+git clone https://github.com/github_username/repo_name.git
+Install NPM packages
 npm install
-
-
-Create database:
-
-CREATE DATABASE carmarket;
-
-
-Configure database in:
-
-backend/src/config/db.js
-
-
-Start server:
-
-npm run dev
-
-
-Backend runs at:
-
-http://localhost:7777
-
-2. Frontend Setup
-cd frontend
-npm install
-npm run dev
-
-
-Frontend runs at:
-
-http://localhost:5173
+Enter your API in config.js
+const API_KEY = 'ENTER YOUR API';
+Change git remote url to avoid accidental pushes to base project
+git remote set-url origin github_username/repo_name
+git remote -v # confirm the changes
+(back to top)
 
 Usage
-Login & Roles
+Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
-User: browse and book cars
+For more examples, please refer to the Documentation
 
-Seller: manage own listings
+(back to top)
 
-Admin: full access
+Roadmap
+ Add Changelog
+ Add back to top links
+ Add Additional Templates w/ Examples
+ Add "components" document to easily copy & paste sections of the readme
+ Multi-language Support
+ Chinese
+ Spanish
+See the open issues for a full list of proposed features (and known issues).
 
-Booking a Car
+(back to top)
 
-Clicking Booking in Car Detail will:
+Contributing
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
 
-Delete the car from DB
+If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement". Don't forget to give the project a star! Thanks again!
 
-Redirect user to homepage
-
-API Overview
-User Authentication
-POST /auth/register
-POST /auth/login
-
-Cars
-GET    /cars
-GET    /cars/:id
-POST   /cars
-PUT    /cars/:id
-DELETE /cars/:id
-
-Users (Admin)
-GET    /users
-GET    /users/:id
-PUT    /users/:id
-DELETE /users/:id
+Fork the Project
+Create your Feature Branch (git checkout -b feature/AmazingFeature)
+Commit your Changes (git commit -m 'Add some AmazingFeature')
+Push to the Branch (git push origin feature/AmazingFeature)
+Open a Pull Request
+Top contributors:
+contrib.rocks image
+(back to top)
 
 License
-
-This project is under the MIT License.
+Distributed under the Unlicense License. See LICENSE.txt for more information.
