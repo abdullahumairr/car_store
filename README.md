@@ -1,144 +1,139 @@
-CarMarket — Used Car Marketplace
+# CarMarket
 
-CarMarket is a full-stack application for buying and selling used cars.
-It includes user roles, car listings, booking system, and an admin dashboard — all built with a modern JavaScript stack.
+CarMarket is a full-stack web application for buying and selling used cars.
+The platform includes multiple user roles, secure authentication, car listing management, and a modern responsive UI.
 
-Overview
+## Overview
 
-CarMarket helps users browse available cars, view detailed information, and book vehicles.
-Sellers can manage their own listings, while admins have full access to all data.
+CarMarket allows users to browse available cars, view details, and book a vehicle.
+Sellers can manage their own listings, and admins can control the entire system.
 
-The app consists of:
+This project consists of:
 
-Frontend: React, Vite, TailwindCSS
-Backend: Node.js, Express, MySQL, JWT
+* Frontend: React, Vite, TailwindCSS, Lucide, Axios
 
-Image Handling: URL-based (no multer)
+* Backend: Node.js, Express, MySQL, JWT, Bcrypt, Cors, Zod, Mysql2, Dotenv
 
-Features
+* Image Handling: URL-based
+
+##  Features
 🔹 User
-Browse all available cars
-View car details
-Book a car (car is removed from database)
+
+* Browse all cars
+
+* View car details
+
+* Book a car (car will be removed from database)
 
 🔹 Seller
-Add new cars
-Edit own cars
-Delete own cars
 
-Manage image URLs (up to 10 images)
+* Add new car listings
+
+* Update own listings
+
+* Delete own listings
+
 🔹 Admin
-Full CRUD on all cars
-Manage users
-Access all dashboards
 
-Installation
+* Full CRUD on all cars
 
-CarMarket is designed for easy setup — you can install backend and frontend separately.
+* Manage all users
 
-Backend Setup
-Navigate to backend:
+* Access to admin dashboard
 
-cd backend
+## Getting Started
+
+To run the project locally, follow the steps below.
+
+### Installation
+
+1. Clone the repo
+   ```sh
+   git clone https://github.com/abdullahumairr/car_store.git
+   cd buy_car
+   ```
+2. Install dependencies for both backend and frontend
+   ```sh
+   cd backend && npm install
+   cd frontend && npm install
+   ```
+3. Add environment variables by copying `.env.example`
+   ```sh
+   cd ..
+   cp backend/.env.example backend/.env
+   ```
+4. Start development servers  
+   Backend:
+   ```sh
+   cd backend
+   npm start
+   ```
+   Frontend:
+   ```sh
+   cd frontend
+   npm run dev
+   ```
+
+### Importing the Database
+
+A SQL dump file is included in the project for quick setup. _yea ik i shouldve used prisma, but this is for assignment's purposes_  
+Make sure you already created a MariaDB/MySQL database. I'll assume you're using `Mysql`, change if necessary
+
+1. Login to MariaDB
+
+   ```sh
+   mysql -u root -p
+   ```
+
+2. Create the database (if not already created)
+
+   ```sql
+   CREATE DATABASE car_store;
+   ```
+
+3. Exit MariaDB and import the dump
+   ```sh< ./car_store.sql
+   mysql -u root -p car_store 
+   ```
+
+After importing, the database will contain all required tables.
+
+## Usage
+
+1. Visit the frontend in your browser:
+
+   ```
+   http://localhost:3000
+   ```
+
+2. Register an account and log into it
+
+3. You can now use it for:
+   - INput your car
+   - Upload car images
+   - Edit and delete car
+   - View your car collection
+  
+## API Overview
+
+### Auth Routes
+  
+| Method   | Endpoint       | Description      |
+| -------- | ---------------| -----------------|
+| POST     | /auth/register | Register account |
+| POST     | /auth/login    | Login & get JWT  |
+
+### Car Routes
+  
+| Method   | Endpoint       | Description      |
+| -------- | -------------- | -------------------------- |
+| GET      | /cars          | Get all cars               |
+| GET      | /cars/:id      | Get car by ID              |
+| POST     | /cars          | Create car (seller/admin)  |
+| PUT      | /cars/:id      | Update car                 |
+| DELETE   | /cars/:id      | Delete car                 |
 
 
-Install dependencies:
+## License
 
-npm install
-
-Create MySQL database:
-CREATE DATABASE carmarket;
-
-Configure database connection in:
-/src/config/db.js
-
-Start the backend:
-
-npm run dev
-
-Backend runs on:
-
-http://localhost:7777
-
-Frontend Setup
-
-Navigate to frontend:
-
-cd frontend
-
-
-Install packages:
-
-npm install
-
-
-Run the frontend:
-
-npm run dev
-
-
-Frontend runs on:
-
-http://localhost:5173
-
-Documentation
-
-Full documentation includes:
-
-Project structure
-
-Authentication flow
-
-CRUD car management
-
-Booking logic
-
-Role permissions
-
-How to run backend & frontend
-
-How image URLs are processed
-
-Seller Dashboard & Admin Dashboard
-
-Project Structure
-Backend
-backend/
- ├── controllers/
- ├── services/
- ├── routes/
- ├── middleware/
- ├── config/
- ├── server.js
-
-Frontend
-frontend/
- ├── components/
- ├── pages/
- ├── services/api.js
- ├── App.jsx
- ├── main.jsx
-
-
-Contributing
-
-The main purpose of this repository is to practice full-stack development using React and Express.
-You can contribute by improving code structure, adding validation, fixing bugs, or enhancing UI.
-
-Good First Issues
-
-If you want to expand the project, here are suggestions:
-
-Add chat between seller & user
-
-Add payment integration
-
-Add image preview before upload
-
-Add pagination & advanced filters
-
-Convert project to TypeScript
-
-License
-
-This project is MIT licensed.
+Distributed under the GPL-v3 License. See `LICENSE` for more information.
